@@ -1,0 +1,1 @@
+# fastapi-nuxt3-docker-boilerplate

@@ -1,0 +1,61 @@
+services:
+  back:
+    image: tmp_back:local
+    build:
+      context: .
+      dockerfile: back/Dockerfile
+    command: uvicorn app.main:app --host 0.0.0.0 --reload
+    volumes:
+      - ./back/:/code/
+    env_file:
+      - secret/.env
+    ports:
+      - 8000:8000
+    depends_on:
+      - postgres
+    networks:
+      - network_back
+      - network_front
+
+  postgres:
+    image: postgres:14.11-alpine
+    volumes:
+      - db_data:/var/lib/postgresql/data/
+    env_file:
+      - secret/.env
+    ports:
+      - 5432:5432
+    networks:
+      - network_back
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASS}
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_HOST=postgres
+
+  front:
+    image: tmp_front:local
+    build:
+      context: .
+      dockerfile: front/Dockerfile
+    volumes:
+      - ./front/:/app/
+      - .gitignore:/app/.gitignore
+      - node_modules:/app/node_modules
+    env_file:
+      - secret/.env
+    command: yarn dev
+    ports:
+      - 3000:3000
+    depends_on:
+      - back
+    networks:
+      - network_front
+
+volumes:
+  db_data:
+  node_modules:
+
+networks:
+  network_back:
+  network_front:

@@ -2,9 +2,9 @@
 
 ## **Pre setup**
 
-- [Install `Python 3.12`](https://www.python.org/),
+- [Install `Python 3.12`](https://www.python.org/), or use [pyenv](https://github.com/pyenv/pyenv) (python version mananger) to install python
 - [Install `poetry`](https://python-poetry.org/),
-- [Install `node 20+ LTS`](https://nodejs.org/en), or use nvm (node virtual manager) to install node
+- [Install `node 20+ LTS`](https://nodejs.org/en), or use [nvm](https://github.com/nvm-sh/nvm) (node version manager) to install node
 - [Install `Docker`, `docker-compose`](https://docs.docker.com/get-docker/)
 - Install `make` command. [Windows](https://stackoverflow.com/questions/32127524/how-to-install-and-use-make-in-windows), [Linux](https://askubuntu.com/questions/161104/how-do-i-install-make) and [Mac](https://stackoverflow.com/questions/10265742/how-to-install-make-and-gcc-on-a-mac)
 

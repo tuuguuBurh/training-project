@@ -1,6 +1,6 @@
-from typing import Generator, Optional
+from typing import Optional
 
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, Request, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from pydantic import BaseModel
@@ -8,7 +8,6 @@ from sqlalchemy.orm.session import Session
 
 from app import crud
 from app.core.config import settings
-from app.db.session import SessionLocal
 from app.models.user import User
 
 credentials_exception = HTTPException(
@@ -22,18 +21,14 @@ class TokenData(BaseModel):
     email: Optional[str] = None
 
 
-def get_db() -> Generator:
-    with SessionLocal() as db:
-        yield db
+def get_db(request: Request):
+    return request.state.db
 
 
 user_oauth2_scheme = OAuth2PasswordBearer(tokenUrl=f"{settings.API_V1_STR}/auth/login", scheme_name="User")
 
 
-async def get_current_user(
-    db: Session = Depends(get_db),
-    token: str = Depends(user_oauth2_scheme),
-) -> User:
+async def get_current_user(db: Session = Depends(get_db), token: str = Depends(user_oauth2_scheme)) -> User:
     try:
         payload = jwt.decode(
             token,

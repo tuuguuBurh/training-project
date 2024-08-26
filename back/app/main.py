@@ -5,6 +5,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
+from app.middelwares.db_session import DBSessionMiddleware
 from app.v1.api_user import user_router
 
 log_fmt = "%(pathname)s:%(funcName)s(%(lineno)d) %(message)s"
@@ -32,6 +33,7 @@ def get_application():
 
 
 app = get_application()
+app.add_middleware(DBSessionMiddleware)
 
 
 @app.middleware("http")

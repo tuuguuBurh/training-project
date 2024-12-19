@@ -12,7 +12,8 @@ services:
     ports:
       - 8000:8000
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     networks:
       - network_back
       - network_front
@@ -32,6 +33,11 @@ services:
       - POSTGRES_PASSWORD=${DB_PASS}
       - POSTGRES_DB=${DB_NAME}
       - POSTGRES_HOST=postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -h postgres"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
   front:
     image: tmp_front:local

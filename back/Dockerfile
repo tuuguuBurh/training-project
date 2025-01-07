@@ -2,8 +2,9 @@ FROM python:3.12 AS req-stage
 WORKDIR /tmp
 RUN pip install --upgrade pip
 RUN pip install --no-cache-dir poetry
+RUN poetry self add poetry-plugin-export
 COPY ./back/pyproject.toml ./back/poetry.lock* /tmp/
-RUN poetry export -f requirements.txt --output requirements.txt --without-hashes --dev
+RUN poetry export -f requirements.txt --output requirements.txt --without-hashes --all-groups
 
 FROM python:3.12 AS build-stage
 

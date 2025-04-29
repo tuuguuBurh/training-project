@@ -2,7 +2,7 @@
   <div>
     <VApp>
       <VMain>
-        <NuxtPage class="nuxt-page" />
+        <NuxtPage />
       </VMain>
     </VApp>
   </div>
@@ -10,4 +10,8 @@
 
 <script lang="ts" setup></script>
 
-<style scoped></style>
+<style scoped>
+.nuxt-content {
+  background-color: #eef2f6;
+}
+</style>

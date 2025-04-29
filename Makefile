@@ -1,7 +1,9 @@
 folder=$(shell basename $(CURDIR))
 
 clear-nuxt:
+	rm -rf .nuxt
 	rm -rf ./front/.nuxt
+	rm -rf ./front/.output
 
 clear-front: clear-nuxt
 	docker volume rm -f ${folder}_node_modules

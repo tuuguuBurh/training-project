@@ -37,8 +37,8 @@
 
 <script lang="ts" setup>
 import { required, validateEmail } from '@/utils/validates'
-import { userAuthStore } from '@/store/authStore'
-import { type LoginInput } from '~/types/AuthTypes'
+import { userAuthStore } from '~/stores/authStore'
+import { type LoginInput } from '~/types/auth'
 
 definePageMeta({
   layout: 'login',

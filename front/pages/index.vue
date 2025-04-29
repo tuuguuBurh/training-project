@@ -7,7 +7,7 @@
 </template>
 
 <script setup lang="ts">
-import { userAuthStore } from '@/store/authStore'
+import { userAuthStore } from '~/stores/authStore'
 
 const authStore = userAuthStore()
 

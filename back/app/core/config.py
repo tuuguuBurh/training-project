@@ -1,3 +1,4 @@
+import enum
 from functools import lru_cache
 from typing import List, Union
 
@@ -5,10 +6,17 @@ from pydantic import AnyHttpUrl, ConfigDict, field_validator
 from pydantic_settings import BaseSettings
 
 
+class AppENV(enum.Enum):
+    LOCAL = "local"
+    DEV = "dev"
+    STG = "stg"
+    PROD = "prod"
+
+
 class Settings(BaseSettings):
     model_config = ConfigDict(case_sensitive=True, env_file_encoding="utf-8")
 
-    ENV: str = "local"
+    ENV: AppENV = AppENV.LOCAL
     PROJECT_NAME: str
     API_V1_STR: str = "/api/v1"
     OPENAPI_URL: str = f"{API_V1_STR}/openapi.json"
@@ -35,6 +43,9 @@ class Settings(BaseSettings):
     DB_USER: str
     DB_PASS: str
     DB_NAME: str
+
+    DB_SOCKET_DIR: str = "/cloudsql"
+    DB_INSTANCE_NAME: str = "<YOUR_INSTANCE_NAME>"
 
 
 @lru_cache()

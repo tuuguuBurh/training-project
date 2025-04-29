@@ -9,28 +9,31 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "nuxt:prepare": "nuxi prepare",
-    "postinstall": "nuxt prepare",
     "format:check": "prettier --check .",
     "format:write": "prettier --write --list-different ."
   },
   "dependencies": {
-    "@nuxt/icon": "^1.3.1",
-    "@nuxtjs/robots": "^4.0.2",
-    "@pinia/nuxt": "^0.5.1",
-    "vite-plugin-vuetify": "^2.0.3",
-    "vue3-toastify": "^0.2.2",
-    "vuetify": "^3.6.13"
+    "@nuxt/icon": "^1.12.0",
+    "@nuxtjs/robots": "^5.2.10",
+    "@pinia/nuxt": "^0.11.0",
+    "pinia": "^3.0.2",
+    "vite-plugin-vuetify": "^2.1.1",
+    "vue3-toastify": "^0.2.8",
+    "vuetify": "^3.8.2"
   },
   "devDependencies": {
     "@mdi/font": "^7.4.47",
-    "@vitejs/plugin-vue": "^5.1.0",
-    "jsdom": "^24.1.1",
-    "nuxt": "^3.12.4",
-    "prettier": "^3.3.3",
-    "sass": "^1.77.8",
-    "typescript": "^5.5.4"
+    "@vitejs/plugin-vue": "^5.2.3",
+    "jsdom": "^26.1.0",
+    "nuxt": "^3.17.1",
+    "prettier": "^3.5.3",
+    "sass": "^1.87.0",
+    "typescript": "^5.8.3"
   },
   "overrides": {
-    "vue": "^3.4.32"
+    "vue": "latest"
+  },
+  "engines": {
+    "node": ">=22.0.0"
   }
 }

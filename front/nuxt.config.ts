@@ -67,6 +67,7 @@ export default defineNuxtConfig({
   },
   modules: ['@pinia/nuxt', '@nuxt/icon', '@nuxtjs/robots'],
   pinia: {
+    storesDirs: ['./stores/**'],
     autoImports: ['defineStore', ['defineStore', 'definePiniaStore']],
   },
   robots: {

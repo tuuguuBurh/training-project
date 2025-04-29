@@ -1,18 +1,13 @@
 import { defineStore } from 'pinia'
 import { useApiFetch } from '~/server/userApi'
+import { type LoginInput, type AuthInput, type AuthResponse } from '~/types/auth'
 
 interface IStateStore {
   loading: boolean
   errors: string[]
 }
 
-type UserLogin = {
-  username: string
-  password: string
-}
-
-export const userAuthStore = defineStore({
-  id: 'userAuthStore',
+export const userAuthStore = defineStore('userAuthStore', {
   state: (): IStateStore => ({
     loading: false,
     errors: [],
@@ -28,7 +23,7 @@ export const userAuthStore = defineStore({
     },
   },
   actions: {
-    async login(user: UserLogin) {
+    async login(user: LoginInput) {
       const formData = new URLSearchParams()
       formData.append('grant_type', 'password')
       formData.append('username', user.username)
@@ -43,7 +38,12 @@ export const userAuthStore = defineStore({
         throw new Error(error.value?.data?.detail ?? '')
       } else {
         const auth = useCookie('user-auth')
-        auth.value = data.value as string
+        const authResponse = data as AuthResponse
+        const authData: AuthInput = {
+          access_token: authResponse.access_token,
+        }
+
+        auth.value = authData
 
         const email = useCookie('user-email')
         email.value = user.username

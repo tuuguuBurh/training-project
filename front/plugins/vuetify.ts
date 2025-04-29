@@ -5,7 +5,7 @@ import { createVuetify } from 'vuetify'
 import { aliases, mdi } from 'vuetify/iconsets/mdi'
 import '@mdi/font/css/materialdesignicons.css'
 
-export default defineNuxtPlugin((nuxtApp) => {
+export default defineNuxtPlugin((nuxtApp: any) => {
   const vuetify = createVuetify({
     ssr: true,
     icons: {
@@ -20,7 +20,7 @@ export default defineNuxtPlugin((nuxtApp) => {
       themes: {
         dark: {
           colors: {
-            primary: '#001C89',
+            primary: '#15294F',
             secondary: '#292524',
             info: '#1c92f2',
             success: '#1c9b1c',
@@ -37,10 +37,10 @@ export default defineNuxtPlugin((nuxtApp) => {
         light: {
           dark: false,
           colors: {
-            primary: '#001C89',
+            primary: '#15294F',
             secondary: '#EEEEEE',
             info: '#1c92f2',
-            success: '#bef264',
+            success: '#1c9b1c',
             warning: '#fcd34d',
             error: '#ef4444',
             midnightblue: '#000E59',

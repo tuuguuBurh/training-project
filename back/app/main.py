@@ -4,19 +4,19 @@ import time
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.core.config import settings
+from app.core.config import AppENV, settings
 from app.middelwares.db_session import DBSessionMiddleware
 from app.v1.api_user import user_router
 
 log_fmt = "%(pathname)s:%(funcName)s(%(lineno)d) %(message)s"
 logging.basicConfig(
     format="%(levelname)s " + log_fmt,
-    level=logging.DEBUG if settings.ENV == "local" else logging.INFO,
+    level=logging.DEBUG if settings.ENV == AppENV.LOCAL else logging.INFO,
 )
 
 
 def get_application():
-    _debug = settings.ENV == "local"
+    _debug = settings.ENV == AppENV.LOCAL
     _app = FastAPI(
         debug=_debug,
         title=settings.PROJECT_NAME,

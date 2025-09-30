@@ -33,11 +33,12 @@ def create_access_token(*, sub: str) -> str:
 
 def _create_token(token_type: str, lifetime: timedelta, sub: str) -> str:
     payload = {}
-    expire = datetime.now(pytz.timezone("Asia/Ulaanbaatar")) + lifetime
+    timezone = pytz.timezone(settings.TIMEZONE)
+    expire = datetime.now(timezone) + lifetime
     payload["type"] = token_type
 
     payload["exp"] = expire
-    payload["iat"] = datetime.now(pytz.timezone("Asia/Ulaanbaatar"))
+    payload["iat"] = datetime.now(timezone)
     payload["sub"] = str(sub)
 
     return jwt.encode(payload, settings.JWT_SECRET, algorithm=settings.ALGORITHM)

@@ -8,10 +8,13 @@ clear-nuxt:
 clear-front: clear-nuxt
 	docker volume rm -f ${folder}_node_modules
 
+clear-uv-cache:
+	docker volume rm -f ${folder}_uv_cache
+
 clear-db:
 	docker volume rm -f ${folder}_db_data
 
-clear: clear-front clear-db
+clear: clear-front clear-uv-cache clear-db
 
 
 ######################## LOCAL ENVIRONMENT #############################
@@ -35,24 +38,21 @@ bash-front:
 	docker compose -f docker-compose.yml --env-file ./secret/.env run --rm front sh
 
 migrate:
-	docker compose -f docker-compose.yml --env-file ./secret/.env run --rm back alembic upgrade head
+	docker compose -f docker-compose.yml --env-file ./secret/.env run --rm back uv run alembic upgrade head
 
 seed:
 	docker compose -f docker-compose.yml --env-file ./secret/.env run --rm back bash -c "export PYTHONPATH=. && python ./app/seeder.py"
 
-isort:
-	docker compose -f docker-compose.yml --env-file ./secret/.env run --rm back isort --skip alembic --profile black .
+sort-imports:
+	docker compose -f docker-compose.yml --env-file ./secret/.env run --rm back uv run ruff check --select I --fix
 
-flake8:
-	docker compose -f docker-compose.yml --env-file ./secret/.env run --rm back flake8 app
-
-black:
-	docker compose -f docker-compose.yml --env-file ./secret/.env run --rm back black --check --diff --extend-exclude alembic --line-length 120 .
+ruff:
+	docker compose -f docker-compose.yml --env-file ./secret/.env run --rm back uv run ruff format
 
 prettier:
 	docker compose -f docker-compose.yml --env-file ./secret/.env run --rm front yarn format:write
 
-lint: black isort flake8 prettier
+lint: sort-imports ruff
 
 install: down clear build migrate seed down up
 

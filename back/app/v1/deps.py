@@ -34,7 +34,6 @@ async def get_current_user(db: Session = Depends(get_db), token: str = Depends(u
             token,
             settings.JWT_SECRET,
             algorithms=[settings.ALGORITHM],
-            options={"verify_aud": False},
         )
         sub: str = payload.get("sub")
         if not sub:

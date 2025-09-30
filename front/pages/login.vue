@@ -9,7 +9,7 @@
               :loading="isLoading"
               hide-details="auto"
               placeholder="Бүртгэлтэй имэйлээ оруулна уу"
-              :rules="[required, validateEmail]"
+              :rules="[required, validateEmailSecure]"
               class="pb-8"
               variant="outlined"
               rounded="lg"
@@ -20,7 +20,7 @@
               hide-details="auto"
               :placeholder="'Нууц үг'"
               type="password"
-              :rules="[required]"
+              :rules="[required, validatePasswordSecure]"
               variant="outlined"
               rounded="lg"
             />
@@ -36,7 +36,7 @@
 </template>
 
 <script lang="ts" setup>
-import { required, validateEmail } from '@/utils/validates'
+import { required, validateEmailSecure, validatePasswordSecure } from '@/utils/validates'
 import { userAuthStore } from '~/stores/authStore'
 import { type LoginInput } from '~/types/auth'
 

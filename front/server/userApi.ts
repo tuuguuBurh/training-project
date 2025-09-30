@@ -1,10 +1,11 @@
 import { navigateTo, useCookie, useRuntimeConfig } from 'nuxt/app'
 import { type AuthInput } from '~/types/auth'
 import { $fetch, type FetchOptions } from 'ofetch'
+import { getAuthCookie, SECURE_COOKIE_CONFIG } from '~/utils/cookieConfig'
 
 export const useApiFetch = async <T>(path: string, options: FetchOptions<'json'> = {}, isFormData = false) => {
   const config = useRuntimeConfig()
-  const userAuthData = useCookie('user-auth').value as AuthInput | null
+  const userAuthData = getAuthCookie().value as AuthInput | null
 
   const headers: any = {}
 
@@ -30,15 +31,19 @@ export const useApiFetch = async <T>(path: string, options: FetchOptions<'json'>
   } catch (error: any) {
     // Handle auth errors
     if (error?.status === 401) {
-      const auth = useCookie('user-auth')
+      const auth = getAuthCookie()
       auth.value = undefined
       navigateTo('/login')
-      throw new Error('Unauthorized')
+      throw new Error('Session expired. Please login again.')
     }
     if (error?.status === 403) {
       navigateTo('/403')
-      throw new Error('Forbidden')
+      throw new Error('Access denied. You do not have permission to access this resource.')
     }
-    return { data: null, error: { value: error } }
+
+    if (process.env.NODE_ENV === 'development') {
+      console.error('API Error:', error)
+    }
+    return { data: null, error: { value: new Error('An error occurred. Please try again.') } }
   }
 }

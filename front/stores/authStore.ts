@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { useApiFetch } from '~/server/userApi'
 import { type LoginInput, type AuthInput, type AuthResponse } from '~/types/auth'
+import { getAuthCookie, getEmailCookie } from '~/utils/cookieConfig'
 
 interface IStateStore {
   loading: boolean
@@ -14,11 +15,11 @@ export const userAuthStore = defineStore('userAuthStore', {
   }),
   getters: {
     userEmail(): string {
-      const email = useCookie('user-email')
+      const email = getEmailCookie()
       return email.value || ''
     },
     isLoggedIn(): boolean {
-      const userAuthCookie = useCookie('user-auth')
+      const userAuthCookie = getAuthCookie()
       return !!userAuthCookie.value
     },
   },
@@ -35,25 +36,22 @@ export const userAuthStore = defineStore('userAuthStore', {
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       })
       if (error.value) {
-        throw new Error(error.value?.data?.detail ?? '')
+        throw new Error(error.value?.message ?? 'Login failed')
       } else {
-        const auth = useCookie('user-auth')
+        const auth = getAuthCookie()
         const authResponse = data as AuthResponse
-        const authData: AuthInput = {
-          access_token: authResponse.access_token,
-        }
 
-        auth.value = authData
+        auth.value = authResponse.access_token
 
-        const email = useCookie('user-email')
+        const email = getEmailCookie()
         email.value = user.username
         navigateTo('/')
       }
     },
     logout() {
-      const auth = useCookie('user-auth')
+      const auth = getAuthCookie()
       auth.value = undefined
-      const email = useCookie('user-email')
+      const email = getEmailCookie()
       email.value = undefined
       useNuxtApp().$toast.success('Амжилттай гарлаа.')
       navigateTo('/login')

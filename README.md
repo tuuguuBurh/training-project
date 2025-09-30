@@ -2,9 +2,8 @@
 
 ## **Pre setup**
 
-- [Install `Python 3.12`](https://www.python.org/), or use [pyenv](https://github.com/pyenv/pyenv) (python version mananger) to install python
-- [Install `poetry`](https://python-poetry.org/),
-- [Install `node 20+ LTS`](https://nodejs.org/en), or use [nvm](https://github.com/nvm-sh/nvm) (node version manager) to install node
+- [Install `Python 3.13`](https://www.python.org/), or use [pyenv](https://github.com/pyenv/pyenv) (python version mananger) to install python
+- [Install `node 22+ LTS`](https://nodejs.org/en), or use [nvm](https://github.com/nvm-sh/nvm) (node version manager) to install node
 - [Install `Docker`, `docker-compose`](https://docs.docker.com/get-docker/)
 - Install `make` command. [Windows](https://stackoverflow.com/questions/32127524/how-to-install-and-use-make-in-windows), [Linux](https://askubuntu.com/questions/161104/how-do-i-install-make) and [Mac](https://stackoverflow.com/questions/10265742/how-to-install-make-and-gcc-on-a-mac)
 
@@ -18,14 +17,13 @@
 
 2. Create python virtual environment.
 
-    - required to install python3.11 and poetry
+    - [Install `uv`](https://docs.astral.sh/uv/getting-started/installation/),
+
+    - Install python packages using `uv`. It will create virtual environment in `back/.venv`.
 
     ```sh
-    python3 -m venv .venv
-    source .venv/bin/activate
-    pip install --upgrade pip
     cd back
-    poetry install --no-root
+    uv sync
     ```
 
 3. pre-commit.
@@ -33,7 +31,7 @@
     - required to activate `.venv` virtual environment.
 
     ```sh
-    source .venv/bin/activate
+    cd back && source .venv/bin/activate
     pre-commit install
     ```
 
@@ -47,3 +45,19 @@
 
     - frontend: <http://localhost:3000>
     - backend: <http://localhost:8000/docs>
+
+## **Install the packages**
+
+1. Python (back)
+
+    ```sh
+    make bash-back
+    uv add <package-name>
+    ```
+
+2. Nuxt (front)
+
+    ```sh
+    make bash-front
+    yarn add <package-name>
+    ```

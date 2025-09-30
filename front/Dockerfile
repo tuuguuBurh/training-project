@@ -1,23 +1,19 @@
-FROM node:22-alpine AS builder
-
-WORKDIR /app
-
-COPY ./front/package.json ./
-COPY ./front/yarn.lock ./
-RUN yarn install
-
 FROM node:22-alpine
-
-WORKDIR /app
 
 # Set environment variables
 ENV TZ=Asia/Ulaanbaatar
 
 # Use the correct timezone
 RUN apk add --no-cache tzdata && \
-    ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+  ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-COPY --from=builder /app ./
+WORKDIR /app
+
+RUN npm install -g pnpm
+
+COPY ./front/package.json ./
+COPY ./front/pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile
 
 EXPOSE 3000
 

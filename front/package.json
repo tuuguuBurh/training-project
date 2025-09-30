@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "start": "node .output/server/index.mjs",
-    "build": "yarn nuxt:prepare && nuxt build",
+    "build": "pnpm nuxt:prepare && nuxt build",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",

@@ -6,7 +6,9 @@ services:
       dockerfile: back/Dockerfile
     command: uvicorn app.main:app --host 0.0.0.0 --reload
     volumes:
-      - ./back/:/code/
+      - ./back/:/app/
+      - uv_cache:/root/.cache/uv
+      - venv:/app/.venv
     env_file:
       - secret/.env
     ports:
@@ -55,6 +57,8 @@ services:
 volumes:
   db_data:
   node_modules:
+  uv_cache:
+  venv:
 
 networks:
   network_back:

@@ -1,30 +1,19 @@
-FROM python:3.12 AS req-stage
-WORKDIR /tmp
-RUN pip install --upgrade pip
-RUN pip install --no-cache-dir poetry
-RUN poetry self add poetry-plugin-export
-COPY ./back/pyproject.toml ./back/poetry.lock* /tmp/
-RUN poetry export -f requirements.txt --output requirements.txt --without-hashes --all-groups
+FROM python:3.13-slim-bookworm AS base
 
-FROM python:3.12 AS build-stage
+COPY --from=ghcr.io/astral-sh/uv:0.4.9 /uv /bin/uv
 
-WORKDIR /code
+ENV UV_COMPILE_BYTECODE=1
+ENV UV_LINK_MODE=copy
+ENV UV_PYTHON_DOWNLOADS=never
 
-RUN pip install --upgrade pip
-COPY --from=req-stage /tmp/requirements.txt /code/requirements.txt
-RUN pip install --user --no-cache-dir -r /code/requirements.txt
+WORKDIR /app
 
-FROM python:3.12-slim
-# set env variables
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
+COPY ./back/uv.lock ./back/pyproject.toml /app/
 
-# Set timezone
-ENV TZ=Asia/Ulaanbaatar
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --frozen --no-install-project
 
-WORKDIR /code
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --frozen
 
-COPY --from=build-stage /root/.local /root/.local
-
-ENV PATH=/root/.local/bin:$PATH
+ENV PATH="/app/.venv/bin:$PATH"

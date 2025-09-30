@@ -44,14 +44,18 @@ export default defineNuxtConfig({
       {
         rel: 'stylesheet',
         href: 'https://cdn.jsdelivr.net/npm/@mdi/font@6.5.95/css/materialdesignicons.min.css',
+        integrity: 'sha384-scpQJqXbp/4O66QYGm9hiZWcHYBwPwFE/4BPPc63T0ziKqrQVOIwWnSsEIjNuH3e',
+        crossorigin: 'anonymous',
       },
       {
         rel: 'preconnect',
         href: 'https://fonts.googleapis.com',
+        crossorigin: 'anonymous',
       },
       {
         rel: 'preconnect',
         href: 'https://fonts.gstatic.com',
+        crossorigin: 'anonymous',
       },
       {
         rel: 'stylesheet',
@@ -72,7 +76,8 @@ export default defineNuxtConfig({
   },
   robots: {
     UserAgent: '*',
-    Disallow: '',
+    Disallow: ['/api/', '/.nuxt/', '/admin/'],
+    Allow: '/',
   },
   css: ['vuetify/lib/styles/main.sass', '@/assets/settings.scss', '@/assets/main.scss'],
   build: {
@@ -84,6 +89,32 @@ export default defineNuxtConfig({
     },
     ssr: {
       noExternal: ['vuetify'],
+    },
+  },
+  nitro: {
+    routeRules: {
+      '/**': {
+        headers: {
+          'Content-Security-Policy': [
+            "default-src 'self'",
+            "script-src 'self' 'unsafe-inline'" + (process.env.NODE_ENV === 'development' ? " 'unsafe-eval'" : ''), // unsafe-eval only in development
+            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net",
+            "font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net",
+            "img-src 'self' data: https:",
+            "connect-src 'self' " +
+              new URL(process.env.NUXT_PUBLIC_API_BASE || 'http://localhost:8000/api/v1').origin +
+              ' ws: wss:',
+            "frame-ancestors 'none'",
+            "base-uri 'self'",
+            "form-action 'self'",
+          ].join('; '),
+          'X-Frame-Options': 'DENY',
+          'X-Content-Type-Options': 'nosniff',
+          'Referrer-Policy': 'strict-origin-when-cross-origin',
+          'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
+          'X-XSS-Protection': '1; mode=block',
+        },
+      },
     },
   },
 })

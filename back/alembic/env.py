@@ -1,11 +1,13 @@
 from __future__ import with_statement
 
-from app.db.session import engine
-from app.db.base import Base  # noqa
 from logging.config import fileConfig
-from sqlalchemy import engine_from_config, pool
 from time import sleep
+
+from sqlalchemy import engine_from_config, pool
+
 from alembic import context
+from app.db.base import Base  # noqa
+from app.db.session import engine
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

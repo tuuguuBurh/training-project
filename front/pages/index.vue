@@ -1,25 +1,34 @@
 <template>
-  <div>{{ email }}</div>
-  <button class="ml-5" @click="logout">
-    <v-icon>mdi-logout</v-icon>
-    <span>Гарах</span>
-  </button>
+  <div>
+    <div class="user-info">
+      <p>Welcome, {{ userEmail }}</p>
+    </div>
+    <button class="ml-5" @click="handleLogout">
+      <v-icon>mdi-logout</v-icon>
+      <span>Logout</span>
+    </button>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { userAuthStore } from '~/stores/authStore'
-
-const authStore = userAuthStore()
+import { useAuthStore } from '~/stores/authStore'
 
 definePageMeta({
   layout: 'default',
   middleware: 'auth',
 })
 
-const email = computed(() => String(authStore.userEmail))
+const authStore = useAuthStore()
 
-const logout = () => {
+const userEmail = computed(() => authStore.userEmail)
+
+const handleLogout = () => {
   authStore.logout()
 }
 </script>
-<style scoped></style>
+
+<style scoped>
+.user-info {
+  padding: 1rem;
+}
+</style>

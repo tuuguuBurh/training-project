@@ -1,9 +1,10 @@
-import { getAuthCookie } from '~/utils/cookieConfig'
+import { useCookieAuth } from '~/composables/useCookieAuth'
+import { ROUTES } from '~/constants'
 
 export default defineNuxtRouteMiddleware(() => {
-  const userAuth = getAuthCookie()
+  const { isAuthenticated } = useCookieAuth()
 
-  if (!userAuth || !userAuth.value) {
-    return navigateTo('/login')
+  if (!isAuthenticated.value) {
+    return navigateTo(ROUTES.LOGIN)
   }
 })

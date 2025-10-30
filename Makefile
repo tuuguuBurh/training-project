@@ -3,7 +3,9 @@ folder=$(shell basename $(CURDIR))
 clear-nuxt:
 	rm -rf .nuxt
 	rm -rf ./front/.nuxt
+	rm -rf ./front/.pnpm-store
 	rm -rf ./front/.output
+	rm -rf ./back/.ruff_cache
 
 clear-front: clear-nuxt
 	docker volume rm -f ${folder}_node_modules
@@ -49,8 +51,8 @@ sort-imports:
 ruff:
 	docker compose -f docker-compose.yml --env-file ./secret/.env run --rm back uv run ruff format
 
-prettier:
-	docker compose -f docker-compose.yml --env-file ./secret/.env run --rm front yarn format:write
+# prettier:
+# 	docker compose -f docker-compose.yml --env-file ./secret/.env run --rm front yarn format:write
 
 lint: sort-imports ruff
 

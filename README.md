@@ -59,5 +59,20 @@
 
     ```sh
     make bash-front
-    yarn add <package-name>
+    pnpm install
+    pnpm add <package-name>
+    ```
+
+3. Alembic auto generate migration files
+
+    ```sh
+    # access backend docker
+    make bash-back
+    ```
+
+    - then run autogenerate the changes of models using [alembic](https://alembic.sqlalchemy.org/en/latest/).
+    - it will be generate migration file in `back/alembic/versions` folder.
+
+    ```sh
+    alembic revision --autogenerate -m "your commit message"
     ```

@@ -1,60 +1,71 @@
 import { defineStore } from 'pinia'
-import { useApiFetch } from '~/server/userApi'
-import { type LoginInput, type AuthInput, type AuthResponse } from '~/types/auth'
-import { getAuthCookie, getEmailCookie } from '~/utils/cookieConfig'
+import { useAuth } from '~/composables/useAuth'
+import { useCookieAuth } from '~/composables/useCookieAuth'
+import type { LoginInput } from '~/types/auth'
 
-interface IStateStore {
+interface AuthState {
   loading: boolean
-  errors: string[]
+  error: string | null
 }
 
-export const userAuthStore = defineStore('userAuthStore', {
-  state: (): IStateStore => ({
+export const useAuthStore = defineStore('auth', {
+  state: (): AuthState => ({
     loading: false,
-    errors: [],
+    error: null,
   }),
+
   getters: {
     userEmail(): string {
-      const email = getEmailCookie()
-      return email.value || ''
+      const { userEmail } = useCookieAuth()
+      return userEmail.value
     },
+
     isLoggedIn(): boolean {
-      const userAuthCookie = getAuthCookie()
-      return !!userAuthCookie.value
+      const { isAuthenticated } = useCookieAuth()
+      return isAuthenticated.value
+    },
+
+    isLoading(): boolean {
+      return this.loading
     },
   },
+
   actions: {
-    async login(user: LoginInput) {
-      const formData = new URLSearchParams()
-      formData.append('grant_type', 'password')
-      formData.append('username', user.username)
-      formData.append('password', user.password)
+    async login(credentials: LoginInput): Promise<boolean> {
+      this.loading = true
+      this.error = null
 
-      const { data, error } = await useApiFetch('/auth/login', {
-        method: 'post',
-        body: formData,
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      })
-      if (error.value) {
-        throw new Error(error.value?.message ?? 'Login failed')
-      } else {
-        const auth = getAuthCookie()
-        const authResponse = data as AuthResponse
+      try {
+        const { login } = useAuth()
+        const response = await login(credentials)
 
-        auth.value = authResponse.access_token
+        if (!response) {
+          this.error = 'Login failed'
+          return false
+        }
 
-        const email = getEmailCookie()
-        email.value = user.username
+        const { setAuth } = useCookieAuth()
+        setAuth(response.access_token, credentials.username)
+
         navigateTo('/')
+        return true
+      } catch (error: any) {
+        this.error = error.message || 'Login failed'
+        return false
+      } finally {
+        this.loading = false
       }
     },
-    logout() {
-      const auth = getAuthCookie()
-      auth.value = undefined
-      const email = getEmailCookie()
-      email.value = undefined
-      useNuxtApp().$toast.success('Амжилттай гарлаа.')
-      navigateTo('/login')
+
+    logout(): void {
+      const { logout } = useAuth()
+      logout()
+    },
+
+    clearError(): void {
+      this.error = null
     },
   },
 })
+
+export const userAuthStore = useAuthStore

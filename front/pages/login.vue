@@ -2,23 +2,23 @@
   <div>
     <main>
       <section>
-        <v-form v-model="valid" fast-fail @submit.prevent.stop="login">
+        <v-form v-model="isValid" fast-fail @submit.prevent="handleLogin">
           <div class="mb-3">
             <v-text-field
-              v-model="user.username"
+              v-model="credentials.username"
               :loading="isLoading"
               hide-details="auto"
-              placeholder="Бүртгэлтэй имэйлээ оруулна уу"
+              placeholder="Enter your email"
               :rules="[required, validateEmailSecure]"
               class="pb-8"
               variant="outlined"
               rounded="lg"
             />
             <v-text-field
-              v-model="user.password"
+              v-model="credentials.password"
               :loading="isLoading"
               hide-details="auto"
-              :placeholder="'Нууц үг'"
+              placeholder="Enter your password"
               type="password"
               :rules="[required, validatePasswordSecure]"
               variant="outlined"
@@ -27,7 +27,9 @@
           </div>
           <div>
             <v-spacer />
-            <button :loading="isLoading" type="submit">Нэвтрэх</button>
+            <button :disabled="isLoading || !isValid" type="submit">
+              {{ isLoading ? 'Logging in...' : 'Login' }}
+            </button>
           </div>
         </v-form>
       </section>
@@ -37,29 +39,31 @@
 
 <script lang="ts" setup>
 import { required, validateEmailSecure, validatePasswordSecure } from '@/utils/validates'
-import { userAuthStore } from '~/stores/authStore'
-import { type LoginInput } from '~/types/auth'
+import { useAuthStore } from '~/stores/authStore'
+import type { LoginInput } from '~/types/auth'
 
 definePageMeta({
   layout: 'login',
 })
 
-const authStore = userAuthStore()
+const authStore = useAuthStore()
+const toast = useNuxtApp().$toast
 
-const isLoading = ref<boolean>(false)
-const valid = ref(false)
+const isLoading = ref(false)
+const isValid = ref(false)
+const credentials = ref<LoginInput>({ username: '', password: '' })
 
-const user = ref<LoginInput>({ username: '', password: '' })
+const handleLogin = async () => {
+  if (!isValid.value) return
 
-const login = async () => {
+  isLoading.value = true
   try {
-    if (valid.value) {
-      isLoading.value = true
-      await authStore.login(user.value)
-      useNuxtApp().$toast.success('Амжилттай нэвтэрлээ')
+    const success = await authStore.login(credentials.value)
+    if (success) {
+      toast.success('Successfully logged in')
     }
   } catch (error: any) {
-    useNuxtApp().$toast.error(error.message)
+    toast.error(error.message || 'Login failed')
   } finally {
     isLoading.value = false
   }

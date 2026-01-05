@@ -1,5 +1,6 @@
-from typing import Any, Dict, Union
+from typing import Any
 
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app import schemas
@@ -10,23 +11,34 @@ from app.models.user import User
 
 class CRUDUser(CRUDBase[User, schemas.UserCreate, schemas.UserUpdate]):
     def get_by_email(self, db: Session, email: str) -> User | None:
-        return db.query(User).filter(User.email == email).first()
+        stmt = select(User).where(User.email == email)
+        return db.scalar(stmt)
 
-    def create(self, db: Session, *, obj_in: schemas.UserCreate) -> User:
-        create_data = obj_in.model_dump()
-        create_data.pop("password")
-        db_obj = User(**create_data)
-        db_obj.hashed_password = get_password_hash(obj_in.password)
+    def create(self, db: Session, obj_in: schemas.UserCreate) -> User:
+        """Create a new user with hashed password."""
+        db_obj = User(
+            email=obj_in.email,
+            first_name=obj_in.first_name,
+            last_name=obj_in.last_name,
+            hashed_password=get_password_hash(obj_in.password),
+        )
         db.add(db_obj)
         db.commit()
-
+        db.refresh(db_obj)
         return db_obj
 
-    def update(self, db: Session, *, db_obj: User, obj_in: Union[schemas.UserUpdate, Dict[str, Any]]) -> User:
-        if isinstance(obj_in, dict):
-            update_data = obj_in
-        else:
-            update_data = obj_in.model_dump(exclude_unset=True)
+    def update(
+        self,
+        db: Session,
+        db_obj: User,
+        obj_in: schemas.UserUpdate | dict[str, Any],
+    ) -> User:
+        """Update user fields, hashing password if provided."""
+        update_data = obj_in if isinstance(obj_in, dict) else obj_in.model_dump(exclude_unset=True)
+
+        if password := update_data.pop("password", None):
+            update_data["hashed_password"] = get_password_hash(password)
+
         return super().update(db=db, db_obj=db_obj, obj_in=update_data)
 
 

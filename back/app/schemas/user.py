@@ -1,29 +1,46 @@
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, EmailStr
+from pydantic import BaseModel, ConfigDict, EmailStr, Field
+
+
+class Token(BaseModel):
+    """OAuth2 token response."""
+
+    access_token: str
+    token_type: str = "bearer"
+
+
+class TokenPayload(BaseModel):
+    """JWT token payload."""
+
+    sub: str | None = None
+    exp: int | None = None
 
 
 class UserBase(BaseModel):
     email: EmailStr
-    first_name: str
-    last_name: str
+    first_name: str = Field(..., min_length=1, max_length=100)
+    last_name: str = Field(..., min_length=1, max_length=100)
     is_active: bool = True
 
 
 class UserCreate(UserBase):
-    password: str
+    password: str = Field(..., min_length=8, max_length=128)
 
 
-class UserUpdate(UserBase):
+class UserUpdate(BaseModel):
+    email: EmailStr | None = None
+    first_name: str | None = Field(default=None, min_length=1, max_length=100)
+    last_name: str | None = Field(default=None, min_length=1, max_length=100)
+    password: str | None = Field(default=None, min_length=8, max_length=128)
+    is_active: bool | None = None
+
+
+class UserResponse(UserBase):
     id: UUID
-
-
-class UserInDBBase(UserBase):
-    id: UUID
-    hashed_password: str
 
     model_config = ConfigDict(from_attributes=True)
 
 
-class User(UserInDBBase):
-    pass
+class UserInDB(UserResponse):
+    hashed_password: str

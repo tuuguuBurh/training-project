@@ -1,9 +1,8 @@
-from typing import Any, Dict, Generic, List, Optional, Tuple, Type, TypeVar, Union
+from typing import Any, Generic, TypeVar
 from uuid import UUID
 
-from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
-from sqlalchemy import desc
+from sqlalchemy import desc, func, select
 from sqlalchemy.orm import Session
 
 from app.db.base_class import Base
@@ -14,40 +13,44 @@ UpdateSchemaType = TypeVar("UpdateSchemaType", bound=BaseModel)
 
 
 class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
-    def __init__(self, model: Type[ModelType]):
-        """
-        CRUD object with default methods to Create, Read, Update, Delete (CRUD).
-        **Parameters**
-        * `model`: A SQLAlchemy model class
-        * `schema`: A Pydantic model (schema) class
-        """
+    """Base class with default CRUD operations using SQLAlchemy 2.0 style."""
+
+    def __init__(self, model: type[ModelType]) -> None:
         self.model = model
 
-    def get(self, db: Session, id: UUID) -> Optional[ModelType]:
-        return db.query(self.model).filter(self.model.id == id).first()
+    def get(self, db: Session, id: UUID) -> ModelType | None:
+        """Retrieve a single record by ID."""
+        return db.get(self.model, id)
 
-    def get_multi(self, db: Session, skip: int = 0, limit: int = 5000) -> List[ModelType]:
-        return db.query(self.model).order_by(desc(self.model.id)).offset(skip).limit(limit).all()
-
-    def filter_multi(
+    def get_multi(
         self,
         db: Session,
         skip: int = 0,
         limit: int = 5000,
-    ) -> Tuple[int, List[ModelType]]:
-        query = db.query(self.model)
+    ) -> list[ModelType]:
+        """Retrieve multiple records with pagination."""
+        stmt = select(self.model).order_by(desc(self.model.id)).offset(skip).limit(limit)
+        return list(db.scalars(stmt).all())
 
-        count = query.count()
-        data = query.order_by(desc(self.model.id)).offset(skip).limit(limit).all()
+    def get_multi_with_count(
+        self,
+        db: Session,
+        skip: int = 0,
+        limit: int = 5000,
+    ) -> tuple[int, list[ModelType]]:
+        """Retrieve multiple records with total count for pagination."""
+        total = self.count(db)
+        items = self.get_multi(db, skip=skip, limit=limit)
+        return total, items
 
-        return count, data
-
-    def get_all_count(self, db: Session) -> int:
-        return db.query(self.model).count()
+    def count(self, db: Session) -> int:
+        """Return total count of records."""
+        stmt = select(func.count()).select_from(self.model)
+        return db.scalar(stmt) or 0
 
     def create(self, db: Session, obj_in: CreateSchemaType) -> ModelType:
-        obj_in_data = jsonable_encoder(obj_in)
-        db_obj = self.model(**obj_in_data)
+        """Create a new record."""
+        db_obj = self.model(**obj_in.model_dump())
         db.add(db_obj)
         db.commit()
         db.refresh(db_obj)
@@ -57,24 +60,25 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         self,
         db: Session,
         db_obj: ModelType,
-        obj_in: Union[UpdateSchemaType, Dict[str, Any]],
+        obj_in: UpdateSchemaType | dict[str, Any],
     ) -> ModelType:
-        db.refresh(db_obj)
-        obj_data = jsonable_encoder(db_obj)
-        if isinstance(obj_in, dict):
-            update_data = obj_in
-        else:
-            update_data = obj_in.model_dump(exclude_unset=True)
-        for field in obj_data:
-            if field in update_data:
-                setattr(db_obj, field, update_data[field])
+        """Update an existing record."""
+        update_data = obj_in if isinstance(obj_in, dict) else obj_in.model_dump(exclude_unset=True)
+
+        for field, value in update_data.items():
+            if hasattr(db_obj, field):
+                setattr(db_obj, field, value)
+
         db.add(db_obj)
         db.commit()
         db.refresh(db_obj)
         return db_obj
 
     def remove(self, db: Session, id: UUID) -> ModelType:
-        obj = db.query(self.model).get(id)
+        """Delete a record by ID."""
+        obj = db.get(self.model, id)
+        if obj is None:
+            raise ValueError(f"{self.model.__name__}({id}) not found")
         db.delete(obj)
         db.commit()
         return obj

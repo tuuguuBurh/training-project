@@ -4,6 +4,7 @@ services:
     build:
       context: .
       dockerfile: back/Dockerfile
+      target: dev
     command: uvicorn app.main:app --host 0.0.0.0 --reload
     volumes:
       - ./back/:/app/
@@ -12,12 +13,14 @@ services:
     env_file:
       - secret/.env
     ports:
-      - 8000:8000
+      - "8000:8000"
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     networks:
       - network_back
       - network_front
+    restart: unless-stopped
 
   postgres:
     image: postgres:16-alpine
@@ -26,33 +29,41 @@ services:
     env_file:
       - secret/.env
     ports:
-      - 5432:5432
+      - "5432:5432"
     networks:
       - network_back
     environment:
-      - POSTGRES_USER=${DB_USER}
-      - POSTGRES_PASSWORD=${DB_PASS}
-      - POSTGRES_DB=${DB_NAME}
-      - POSTGRES_HOST=postgres
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+      POSTGRES_DB: ${DB_NAME}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
 
   front:
     image: tmp_front:local
     build:
       context: .
       dockerfile: front/Dockerfile
+      target: dev
     volumes:
       - ./front/:/app/
-      - .gitignore:/app/.gitignore
       - node_modules:/app/node_modules
     env_file:
       - secret/.env
     command: pnpm run dev
     ports:
-      - 3000:3000
+      - "3000:3000"
     depends_on:
-      - back
+      back:
+        condition: service_started
     networks:
       - network_front
+    restart: unless-stopped
 
 volumes:
   db_data:

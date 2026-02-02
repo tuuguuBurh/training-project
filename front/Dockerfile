@@ -1,21 +1,36 @@
-FROM node:22-alpine
+FROM node:22-alpine AS base
 
-# Set environment variables
-ENV TZ=Asia/Ulaanbaatar
+RUN corepack enable && corepack prepare pnpm@10.28.2 --activate
 
-# Use the correct timezone
+ENV TZ=Asia/Ulaanbaatar \
+  NUXT_HOST=0.0.0.0 \
+  NUXT_PORT=3000
+
 RUN apk add --no-cache tzdata && \
-  ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+  ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
+  echo $TZ > /etc/timezone && \
+  apk del --no-cache tzdata
 
 WORKDIR /app
 
-RUN npm install -g pnpm
+COPY ./front/package.json ./front/pnpm-lock.yaml ./
 
-COPY ./front/package.json ./
-COPY ./front/pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile
 
 EXPOSE 3000
 
-ENV NUXT_HOST=0.0.0.0
-ENV NUXT_PORT=3000
+# ============================================
+# Development target (runs as root for volume mounts)
+# ============================================
+FROM base AS dev
+
+# ============================================
+# Production target (runs as non-root)
+# ============================================
+FROM base AS prod
+
+RUN addgroup --system --gid 1001 nodejs && \
+  adduser --system --uid 1001 --ingroup nodejs nuxt && \
+  chown -R nuxt:nodejs /app
+
+USER nuxt

@@ -76,3 +76,15 @@
     ```sh
     alembic revision --autogenerate -m "your commit message"
     ```
+
+4. Create python virtual environment in local project folder
+
+    ```sh
+    rm -rf .venv && cp back/uv.lock . && cp back/pyproject.toml . && cp back/.python-version . && uv sync && rm uv.lock pyproject.toml .python-version
+    ```
+
+5. Install node modules in local project folder
+
+    ```sh
+    rm -rf node_modules && cp front/.nvmrc . && cp front/package.json . && cp front/pnpm-lock.yaml . && nvm use && pnpm install && rm .nvmrc package.json pnpm-lock.yaml
+    ```

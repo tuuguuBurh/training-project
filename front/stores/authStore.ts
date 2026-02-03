@@ -40,17 +40,17 @@ export const useAuthStore = defineStore('auth', {
         const response = await login(credentials)
 
         if (!response) {
-          this.error = 'Login failed'
+          // Error is handled in useAuth via toast
           return false
         }
 
         const { setAuth } = useCookieAuth()
         setAuth(response.access_token, credentials.username)
 
-        navigateTo('/')
+        await navigateTo('/')
         return true
       } catch (error: any) {
-        this.error = error.message || 'Login failed'
+        this.error = error.message || 'An unexpected error occurred'
         return false
       } finally {
         this.loading = false
@@ -67,5 +67,3 @@ export const useAuthStore = defineStore('auth', {
     },
   },
 })
-
-export const userAuthStore = useAuthStore

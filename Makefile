@@ -1,5 +1,12 @@
 folder=$(shell basename $(CURDIR))
 
+.PHONY: help
+help: ## Show this help message
+	@echo "Usage: make [target]"
+	@echo ""
+	@echo "Targets:"
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
+
 clear-nuxt:
 	rm -rf .nuxt
 	rm -rf ./front/.nuxt
@@ -18,13 +25,13 @@ clear-uv-cache:
 clear-db:
 	docker volume rm -f ${folder}_db_data
 
-clear: clear-front clear-uv-cache clear-db
+clear: clear-front clear-uv-cache clear-db ## Clear all temporary files and volumes
 
 
 ######################## LOCAL ENVIRONMENT #############################
 
 # install uv and nvm, `nvm install 22` for node 22
-local-setup:
+local-setup: ## Setup local development environment
 	rm -rf .venv && cp back/uv.lock . && cp back/pyproject.toml . && cp back/.python-version . && \
 		uv sync && rm uv.lock pyproject.toml .python-version
 	rm -rf node_modules && cp front/.nvmrc . && cp front/package.json . && cp front/pnpm-lock.yaml . && \
@@ -37,16 +44,16 @@ pnpm-update: down clear-front
 	docker compose -f docker-compose.yml --env-file ./secret/.env run --rm front pnpm install --force
 	docker compose -f docker-compose.yml --env-file ./secret/.env run --rm front pnpm update --latest
 
-build:
+build: ## Build docker images
 	docker compose -f docker-compose.yml --env-file ./secret/.env build
 
-up:
+up: ## Start the application
 	docker compose -f docker-compose.yml --env-file ./secret/.env up
 
-up-back:
+up-back: ## Start only backend in detached mode
 	docker compose -f docker-compose.yml --env-file ./secret/.env up -d
 
-down:
+down: ## Stop and remove containers
 	docker compose -f docker-compose.yml --env-file ./secret/.env down
 
 bash-back:
@@ -55,10 +62,10 @@ bash-back:
 bash-front:
 	docker compose -f docker-compose.yml --env-file ./secret/.env run --rm front sh
 
-migrate:
+migrate: ## Run alembic migrations
 	docker compose -f docker-compose.yml --env-file ./secret/.env run --rm back uv run alembic upgrade head
 
-seed:
+seed: ## Seed the database
 	docker compose -f docker-compose.yml --env-file ./secret/.env run --rm back bash -c "export PYTHONPATH=. && python ./app/seeder.py"
 
 sort-imports:
@@ -70,9 +77,9 @@ ruff:
 prettier:
 	docker compose -f docker-compose.yml --env-file ./secret/.env run --rm front pnpm format:write
 
-lint: sort-imports ruff prettier
+lint: sort-imports ruff prettier ## Run all linting tools
 
-install: down clear build migrate seed down up
+install: down clear build migrate seed down up ## Full clean installation and startup
 
 
 ######################## PRODUCTION ENVIRONMENT #############################

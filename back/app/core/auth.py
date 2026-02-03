@@ -11,6 +11,11 @@ from app.models.user import User
 
 
 def authenticate_user(db: Session, email: str, password: str) -> User | None:
+    """
+    Authenticate a user by email and password.
+
+    Returns the user if successful, None otherwise.
+    """
     user = crud.user.get_by_email(db=db, email=email)
     if not user:
         return None
@@ -31,8 +36,12 @@ def create_access_token(sub: str, expires_delta: timedelta | None = None) -> str
     return _create_token(token_type="access_token", lifetime=lifetime, sub=sub)
 
 
-def _create_token(token_type: str, lifetime: timedelta, sub: str) -> str:
-    """Create a JWT token with the given parameters."""
+def _create_token(*, token_type: str, lifetime: timedelta, sub: str) -> str:
+    """
+    Create a JWT token with the given parameters.
+
+    Uses the configured application timezone.
+    """
     tz = ZoneInfo(settings.TIMEZONE)
     now = datetime.now(tz)
 

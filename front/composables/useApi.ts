@@ -4,9 +4,9 @@ import { getAuthCookie } from '~/utils/cookieConfig'
 import { ApiError, AuthError, NetworkError } from '~/utils/errors'
 import { HTTP_STATUS, ROUTES } from '~/constants'
 
-interface ApiResponse<T> {
+export interface ApiResponse<T> {
   data: T | null
-  error: Error | null
+  error: ApiError | AuthError | NetworkError | null
 }
 
 export const useApi = () => {
@@ -15,24 +15,24 @@ export const useApi = () => {
 
   const apiFetch = async <T>(path: string, options: FetchOptions<'json'> = {}): Promise<ApiResponse<T>> => {
     const authCookie = getAuthCookie()
-    const headers: Record<string, string> = {}
+    const headers: Record<string, string> = {
+      ...((options.headers as Record<string, string>) || {}),
+    }
 
     if (authCookie.value) {
       headers.Authorization = `Bearer ${authCookie.value}`
     }
 
-    if (options.body && !(options.body instanceof FormData)) {
+    // Set JSON content type if body is present and not FormData
+    if (options.body && !(options.body instanceof FormData) && !headers['Content-Type']) {
       headers['Content-Type'] = 'application/json'
     }
 
     try {
-      const data = await $fetch<T>(`${baseURL}${path}`, {
+      const data = (await $fetch<T>(`${baseURL}${path}`, {
         ...options,
-        headers: {
-          ...headers,
-          ...(options.headers || {}),
-        },
-      } as any)
+        headers,
+      } as any)) as T
 
       return { data, error: null }
     } catch (error: any) {
@@ -61,7 +61,8 @@ export const useApi = () => {
       }
     }
 
-    if (!navigator.onLine) {
+    // Check for network connectivity in a way that works during SSR
+    if (import.meta.client && !navigator.onLine) {
       return {
         data: null,
         error: new NetworkError('No internet connection'),

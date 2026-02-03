@@ -8,9 +8,9 @@ logger = logging.getLogger(__name__)
 
 def init() -> None:
     with SessionLocal() as db:
-        logger.warning("Creating users.")
+        logger.info("Seeding data...")
         create_users(db=db)
-        logger.warning("Finished.\n---------------------\n")
+        logger.info("Finished seeding process.")
 
 
 if __name__ == "__main__":

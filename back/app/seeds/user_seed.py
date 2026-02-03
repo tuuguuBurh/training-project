@@ -12,7 +12,7 @@ def create_users(db: Session):
     for row in load_data("users.json"):
         email = row.get("email")
         if crud.user.get_by_email(db=db, email=email):
-            logger.info(f"--User with `{email} has already exists.")
+            logger.info("User with email `%s` already exists.", email)
             continue
 
         obj_in = schemas.UserCreate(

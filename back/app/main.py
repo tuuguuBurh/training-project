@@ -108,10 +108,26 @@ def _configure_routes(app: FastAPI) -> None:
     """Configure application routes."""
     app.include_router(user_router, prefix=settings.API_V1_STR)
 
+    @app.get("/", tags=["Root"])
+    async def root() -> dict:
+        """Root endpoint returning basic API information."""
+        return {
+            "project": settings.PROJECT_NAME,
+            "version": "1.0.0",
+            "environment": settings.ENV.value,
+            "docs_url": f"{settings.API_V1_STR}/docs" if not settings.ENV.is_production else None,
+            "health_url": "/health",
+        }
+
     @app.get("/health", tags=["Health"])
     async def health_check() -> dict:
         """Health check endpoint for monitoring."""
-        return {"status": "healthy"}
+        return {
+            "status": "healthy",
+            "timestamp": time.time(),
+            "environment": settings.ENV.value,
+            "project": settings.PROJECT_NAME,
+        }
 
     if settings.ENV.is_development:
 

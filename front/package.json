@@ -1,5 +1,5 @@
 {
-  "name": "tmp-front",
+  "name": "nuxt-frontend",
   "private": true,
   "type": "module",
   "packageManager": "pnpm@10.28.2",
@@ -17,6 +17,7 @@
     "@nuxt/icon": "^2.2.1",
     "@nuxtjs/robots": "^5.7.0",
     "@pinia/nuxt": "^0.11.3",
+    "ofetch": "^1.4.1",
     "pinia": "^3.0.4",
     "vite-plugin-vuetify": "^2.1.3",
     "vue3-toastify": "^0.2.8",
@@ -24,6 +25,7 @@
   },
   "devDependencies": {
     "@mdi/font": "^7.4.47",
+    "@types/node": "^25.2.0",
     "@vitejs/plugin-vue": "^6.0.3",
     "jsdom": "^28.0.0",
     "nuxt": "^4.3.0",

@@ -32,40 +32,42 @@ class Settings(BaseSettings):
         extra="ignore",
     )
 
-    # Application
-    ENV: AppENV = AppENV.LOCAL
-    PROJECT_NAME: str
-    API_V1_STR: str = "/api/v1"
+    # --- Application ---
+    ENV: AppENV = Field(default=AppENV.LOCAL, description="Current application environment")
+    PROJECT_NAME: str = Field(..., description="Name of the project")
+    API_V1_STR: str = Field(default="/api/v1", description="API version prefix")
 
-    # CORS
-    BACKEND_CORS_ORIGINS: list[AnyHttpUrl] = []
+    # --- CORS ---
+    BACKEND_CORS_ORIGINS: list[AnyHttpUrl] = Field(default=[], description="Allowed CORS origins")
 
-    # JWT Configuration
-    JWT_SECRET: str = Field(..., min_length=32)
-    ALGORITHM: str = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = Field(default=60 * 8, description="8 hours")
+    # --- JWT Configuration ---
+    JWT_SECRET: str = Field(..., min_length=32, description="Secret key for JWT generation")
+    ALGORITHM: str = Field(default="HS256", description="JWT algorithm")
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = Field(
+        default=60 * 8, description="Access token expiration in minutes (default 8h)"
+    )
 
-    # Timezone
-    TIMEZONE: str = "UTC"
+    # --- Timezone & Localization ---
+    TIMEZONE: str = Field(default="UTC", description="Application timezone")
 
-    # Rate Limiting
-    RATE_LIMIT_REQUESTS_PER_MINUTE: int = 60
-    RATE_LIMIT_AUTH_REQUESTS_PER_MINUTE: int = 5
-    RATE_LIMIT_BURST_SIZE: int = 10
+    # --- Rate Limiting ---
+    RATE_LIMIT_REQUESTS_PER_MINUTE: int = Field(default=60, description="Global rate limit")
+    RATE_LIMIT_AUTH_REQUESTS_PER_MINUTE: int = Field(default=5, description="Auth-specific rate limit")
+    RATE_LIMIT_BURST_SIZE: int = Field(default=10, description="Burst size for token bucket")
 
-    # Security
-    ENABLE_REQUEST_LOGGING: bool = True
-    ENABLE_INPUT_VALIDATION: bool = True
-    ENABLE_SECURITY_HEADERS: bool = True
+    # --- Feature Toggles ---
+    ENABLE_REQUEST_LOGGING: bool = Field(default=True, description="Enable per-request logging")
+    ENABLE_INPUT_VALIDATION: bool = Field(default=True, description="Enable extra input validation")
+    ENABLE_SECURITY_HEADERS: bool = Field(default=True, description="Enable security headers middleware")
 
-    # Database
-    DB_HOST: str
-    DB_PORT: int = 5432
-    DB_USER: str
-    DB_PASS: str
-    DB_NAME: str
-    DB_SOCKET_DIR: str = "/cloudsql"
-    DB_INSTANCE_NAME: str = ""
+    # --- Database ---
+    DB_HOST: str = Field(..., description="Database host")
+    DB_PORT: int = Field(default=5432, description="Database port")
+    DB_USER: str = Field(..., description="Database username")
+    DB_PASS: str = Field(..., description="Database password")
+    DB_NAME: str = Field(..., description="Database name")
+    DB_SOCKET_DIR: str = Field(default="/cloudsql", description="Unix socket directory for Cloud SQL")
+    DB_INSTANCE_NAME: str = Field(default="", description="Cloud SQL instance connection name")
 
     @computed_field
     @property
@@ -79,6 +81,7 @@ class Settings(BaseSettings):
     @property
     def DATABASE_URL(self) -> str:
         """Construct database connection URL."""
+        # For local development with socket or host
         return f"postgresql://{self.DB_USER}:{self.DB_PASS}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
 
     @field_validator("BACKEND_CORS_ORIGINS", mode="before")

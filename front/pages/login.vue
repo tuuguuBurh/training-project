@@ -1,40 +1,49 @@
 <template>
-  <div>
-    <main>
-      <section>
+  <v-container fill-height class="d-flex align-center justify-center" style="min-height: 80vh">
+    <v-card width="100%" max-width="400" elevation="2" rounded="xl" class="pa-6">
+      <v-card-title class="text-h5 text-center mb-4">Login</v-card-title>
+
+      <v-card-text>
         <v-form v-model="isValid" fast-fail @submit.prevent="handleLogin">
-          <div class="mb-3">
-            <v-text-field
-              v-model="credentials.username"
-              :loading="isLoading"
-              hide-details="auto"
-              placeholder="Enter your email"
-              :rules="[required, validateEmailSecure]"
-              class="pb-8"
-              variant="outlined"
-              rounded="lg"
-            />
-            <v-text-field
-              v-model="credentials.password"
-              :loading="isLoading"
-              hide-details="auto"
-              placeholder="Enter your password"
-              type="password"
-              :rules="[required, validatePasswordSecure]"
-              variant="outlined"
-              rounded="lg"
-            />
-          </div>
-          <div>
-            <v-spacer />
-            <button :disabled="isLoading || !isValid" type="submit">
-              {{ isLoading ? 'Logging in...' : 'Login' }}
-            </button>
-          </div>
+          <v-text-field
+            v-model="credentials.username"
+            :loading="isLoading"
+            label="Email"
+            placeholder="Enter your email"
+            :rules="[required, validateEmailSecure]"
+            variant="outlined"
+            rounded="lg"
+            class="mb-4"
+          />
+
+          <v-text-field
+            v-model="credentials.password"
+            :loading="isLoading"
+            label="Password"
+            placeholder="Enter your password"
+            type="password"
+            :rules="[required, validatePasswordSecure]"
+            variant="outlined"
+            rounded="lg"
+            class="mb-6"
+          />
+
+          <v-btn
+            :disabled="isLoading || !isValid"
+            :loading="isLoading"
+            type="submit"
+            color="primary"
+            block
+            size="large"
+            variant="elevated"
+            rounded="lg"
+          >
+            Login
+          </v-btn>
         </v-form>
-      </section>
-    </main>
-  </div>
+      </v-card-text>
+    </v-card>
+  </v-container>
 </template>
 
 <script lang="ts" setup>

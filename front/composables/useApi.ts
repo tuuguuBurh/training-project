@@ -1,12 +1,13 @@
 import { navigateTo } from 'nuxt/app'
 import type { FetchOptions } from 'ofetch'
 import { getAuthCookie } from '~/utils/cookieConfig'
+import { COOKIE_NAMES } from '~/constants'
 import { ApiError, AuthError, NetworkError } from '~/utils/errors'
 import { HTTP_STATUS, ROUTES } from '~/constants'
 
-export interface ApiResponse<T> {
+interface ApiResponse<T> {
   data: T | null
-  error: ApiError | AuthError | NetworkError | null
+  error: Error | null
 }
 
 export const useApi = () => {
@@ -14,25 +15,25 @@ export const useApi = () => {
   const baseURL = config.public.apiBase
 
   const apiFetch = async <T>(path: string, options: FetchOptions<'json'> = {}): Promise<ApiResponse<T>> => {
-    const authCookie = getAuthCookie()
-    const headers: Record<string, string> = {
-      ...((options.headers as Record<string, string>) || {}),
-    }
+    const authCookie = getAuthCookie(COOKIE_NAMES.AUTH_TOKEN)
+    const headers: Record<string, string> = {}
 
     if (authCookie.value) {
       headers.Authorization = `Bearer ${authCookie.value}`
     }
 
-    // Set JSON content type if body is present and not FormData
-    if (options.body && !(options.body instanceof FormData) && !headers['Content-Type']) {
+    if (options.body && !(options.body instanceof FormData)) {
       headers['Content-Type'] = 'application/json'
     }
 
     try {
-      const data = (await $fetch<T>(`${baseURL}${path}`, {
+      const data = await $fetch<T>(`${baseURL}${path}`, {
         ...options,
-        headers,
-      } as any)) as T
+        headers: {
+          ...headers,
+          ...(options.headers || {}),
+        },
+      } as any)
 
       return { data, error: null }
     } catch (error: any) {
@@ -44,7 +45,7 @@ export const useApi = () => {
     const statusCode = error?.status || error?.statusCode
 
     if (statusCode === HTTP_STATUS.UNAUTHORIZED) {
-      const auth = getAuthCookie()
+      const auth = getAuthCookie(COOKIE_NAMES.AUTH_TOKEN)
       auth.value = null
       navigateTo(ROUTES.LOGIN)
       return {
@@ -61,8 +62,7 @@ export const useApi = () => {
       }
     }
 
-    // Check for network connectivity in a way that works during SSR
-    if (import.meta.client && !navigator.onLine) {
+    if (!navigator.onLine) {
       return {
         data: null,
         error: new NetworkError('No internet connection'),

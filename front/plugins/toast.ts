@@ -5,7 +5,7 @@ export default defineNuxtPlugin((nuxtApp: any) => {
   nuxtApp.vueApp.use(Vue3Toastify, {
     autoClose: 2200,
     clearOnUrlChange: false,
-    position: 'top-right',
+    position: 'bottom-right',
     transition: 'slide',
     theme: 'colored',
   })

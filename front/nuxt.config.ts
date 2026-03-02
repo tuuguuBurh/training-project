@@ -1,13 +1,14 @@
-// https://nuxt.com/docs/api/configuration/nuxt-config
+// https://v3.nuxtjs.org/api/configuration/nuxt.config
 // @ts-nocheck
+import tailwindcss from '@tailwindcss/vite'
+import ThemeConfig from './assets/themes/config.js'
 
 export default defineNuxtConfig({
-  compatibilityDate: '2026-02-02',
-  devtools: { enabled: true },
-
+  devtools: { enabled: process.env.NODE_ENV !== 'production' },
   app: {
+    pageTransition: { name: 'page', mode: 'out-in' },
     head: {
-      title: 'Front',
+      title: 'App',
       htmlAttrs: {
         lang: 'en',
       },
@@ -16,6 +17,10 @@ export default defineNuxtConfig({
         {
           name: 'viewport',
           content: 'width=device-width, initial-scale=1',
+        },
+        {
+          name: 'color-scheme',
+          content: 'light',
         },
       ],
       link: [
@@ -61,57 +66,80 @@ export default defineNuxtConfig({
       ],
     },
   },
-
+  components: true,
   runtimeConfig: {
     public: {
       apiBase: process.env.NUXT_PUBLIC_API_BASE || 'http://localhost:8000/api/v1',
     },
   },
-
-  modules: ['@pinia/nuxt', '@nuxt/icon', '@nuxtjs/robots'],
-
+  modules: ['@pinia/nuxt', '@nuxt/image', '@nuxtjs/robots', '@primevue/nuxt-module', '@nuxt/eslint'],
+  primevue: {
+    options: {
+      theme: {
+        preset: ThemeConfig.preset,
+        options: {
+          ...ThemeConfig.options,
+        },
+      },
+    },
+  },
+  image: {
+    format: ['webp'],
+    provider: 'ipx',
+  },
   pinia: {
     storesDirs: ['./stores/**'],
+    autoImports: ['defineStore', ['defineStore', 'definePiniaStore']],
   },
-
   robots: {
-    disallow: ['/api/', '/.nuxt/', '/admin/'],
+    UserAgent: '*',
+    Disallow: ['/api/', '/.nuxt/', '/admin/'],
+    Allow: '/',
   },
-
-  css: ['vuetify/lib/styles/main.sass', '@/assets/settings.scss', '@/assets/main.scss'],
-
+  css: ['~/assets/css/main.css'],
+  features: {
+    inlineStyles: true,
+  },
   build: {
-    transpile: ['vuetify'],
+    transpile: ['primevue', '@primeuix/themes'],
   },
-
   vite: {
+    plugins: [tailwindcss()],
     define: {
-      'process.env.DEBUG': 'false',
+      'process.env.DEBUG': false,
     },
     ssr: {
-      noExternal: ['vuetify'],
+      noExternal: ['primevue', '@primeuix/themes'],
     },
   },
-
+  eslint: {
+    config: {
+      standalone: true,
+    },
+  },
+  imports: {
+    dirs: ['types', 'composables/**'],
+  },
   nitro: {
     routeRules: {
       '/**': {
         headers: {
-          'Content-Security-Policy': [
-            "default-src 'self'",
-            "script-src 'self' 'unsafe-inline'" + (process.env.NODE_ENV === 'development' ? " 'unsafe-eval'" : ''),
-            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net",
-            "font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net",
-            "img-src 'self' data: https:",
-            "connect-src 'self' " +
-              (process.env.NUXT_PUBLIC_API_BASE
-                ? new URL(process.env.NUXT_PUBLIC_API_BASE).origin
-                : 'http://localhost:8000') +
-              ' ws: wss:',
-            "frame-ancestors 'none'",
-            "base-uri 'self'",
-            "form-action 'self'",
-          ].join('; '),
+          'Content-Security-Policy': (() => {
+            const apiBase = process.env.NUXT_PUBLIC_API_BASE || 'http://localhost:8000/api/v1'
+            const apiOrigin = new URL(apiBase).origin
+
+            return [
+              "default-src 'self'",
+              "script-src 'self' 'unsafe-inline' " + (process.env.NODE_ENV === 'development' ? " 'unsafe-eval'" : ''),
+              "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net",
+              "font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net",
+              "img-src 'self' data: https:",
+              "connect-src 'self' " + apiOrigin + ' ws: wss:',
+              "frame-ancestors 'none'",
+              "base-uri 'self'",
+              "form-action 'self'",
+            ].join('; ')
+          })(),
           'X-Frame-Options': 'DENY',
           'X-Content-Type-Options': 'nosniff',
           'Referrer-Policy': 'strict-origin-when-cross-origin',

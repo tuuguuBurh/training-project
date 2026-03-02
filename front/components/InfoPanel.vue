@@ -1,9 +1,9 @@
 <template>
   <div class="info-panel">
-    <div class="text-center pa-8">
-      <v-icon size="64" color="warning" class="mb-4">mdi-alert-circle-outline</v-icon>
-      <h2 class="text-h4 mb-2">{{ title }}</h2>
-      <p class="text-body-1 text-medium-emphasis">{{ message }}</p>
+    <div class="text-center p-8">
+      <i class="pi pi-exclamation-triangle text-6xl text-yellow-500 mb-4" :aria-label="altText"></i>
+      <h2 class="text-2xl font-semibold mb-2">{{ title }}</h2>
+      <p class="text-gray-600">{{ message }}</p>
     </div>
   </div>
 </template>

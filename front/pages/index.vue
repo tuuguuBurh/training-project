@@ -1,40 +1,18 @@
-<template>
-  <v-container>
-    <v-row justify="center" align="center" class="mt-10">
-      <v-col cols="12" sm="8" md="6" class="text-center">
-        <h1 class="text-h4 mb-4">Welcome</h1>
-        <p class="text-subtitle-1 mb-6">
-          Logged in as:
-          <strong>{{ userEmail }}</strong>
-        </p>
-
-        <v-btn color="primary" prepend-icon="mdi-logout" variant="elevated" rounded="lg" @click="handleLogout">
-          Logout
-        </v-btn>
-      </v-col>
-    </v-row>
-  </v-container>
-</template>
-
 <script setup lang="ts">
-import { useAuthStore } from '~/stores/authStore'
-
 definePageMeta({
+  title: 'Dashboard',
   layout: 'default',
-  middleware: 'auth',
 })
-
-const authStore = useAuthStore()
-
-const userEmail = computed(() => authStore.userEmail)
-
-const handleLogout = () => {
-  authStore.logout()
-}
 </script>
 
-<style scoped>
-.user-info {
-  padding: 1rem;
-}
-</style>
+<template>
+  <div class="space-y-8 p-6">
+    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+      <h1 class="text-2xl font-bold text-slate-900">Dashboard</h1>
+    </div>
+
+    <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-200">
+      <p class="text-slate-600">Welcome to your application. This is a template dashboard page.</p>
+    </div>
+  </div>
+</template>

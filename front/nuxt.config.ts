@@ -108,8 +108,12 @@ export default defineNuxtConfig({
     define: {
       'process.env.DEBUG': false,
     },
+    optimizeDeps: {
+      include: ['@tanstack/vue-query', 'zod', 'vue3-toastify'],
+    },
     ssr: {
       noExternal: ['primevue', '@primeuix/themes'],
+      external: ['vue3-toastify'],
     },
   },
   eslint: {

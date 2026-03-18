@@ -18,7 +18,7 @@ max_line_length = 119
 [*.{html,css,scss,sass,less}]
 indent_size = 2
 
-[*.{js,jsx,ts,tsx}]
+[*.{js,jsx,ts,tsx,mjs,cjs}]
 indent_size = 2
 max_line_length = 100
 

@@ -5,5 +5,19 @@
     "last_name": "Erdenebat",
     "password": "u/eq4BiNrB4Z6D7k",
     "is_active": true
+  },
+  {
+    "email": "tsendee@nashatech.com",
+    "first_name": "Tsendayush",
+    "last_name": "Tserensaikhan",
+    "password": "u/eq4BiNrB4Z6D7k",
+    "is_active": true
+  },
+  {
+    "email": "munkhuush@nashatech.com",
+    "first_name": "Munkhdelger",
+    "last_name": "Gonchigsuren",
+    "password": "u/eq4BiNrB4Z6D7k",
+    "is_active": true
   }
 ]

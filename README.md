@@ -46,6 +46,8 @@
     - frontend: <http://localhost:3000>
     - backend: <http://localhost:8000/docs>
 
+5. [Login information and seed data](./back/app/seeds/datas/users.json)
+
 ## **Install the packages**
 
 1. Python (back)

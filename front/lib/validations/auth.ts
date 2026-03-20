@@ -15,10 +15,10 @@ export type LoginFormInput = z.infer<typeof loginFormSchema>
 
 export const validateUsername = (username: string): string | undefined => {
   const result = commonValidations.required.max(50, 'Username must be less than 50 characters').safeParse(username)
-  return result.success ? undefined : result.error.errors[0]?.message
+  return result.success ? undefined : result.error.issues[0]?.message
 }
 
 export const validatePassword = (password: string): string | undefined => {
   const result = commonValidations.password.safeParse(password)
-  return result.success ? undefined : result.error.errors[0]?.message
+  return result.success ? undefined : result.error.issues[0]?.message
 }

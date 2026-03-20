@@ -15,16 +15,16 @@ export interface AuthResponse {
 export type PartialLoginInput = Partial<LoginInput>
 
 declare global {
-  type LoginInput = {
+  interface LoginInput {
     username: string
     password: string
   }
 
-  type AuthInput = {
+  interface AuthInput {
     access_token: string
   }
 
-  type AuthResponse = {
+  interface AuthResponse {
     access_token: string
     token_type: string
   }

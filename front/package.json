@@ -11,7 +11,8 @@
     "nuxt:prepare": "nuxi prepare",
     "format:check": "prettier --check .",
     "format:write": "prettier --write --list-different .",
-    "lint": "eslint . --fix"
+    "lint": "eslint . --fix",
+    "typescript:check": "pnpm tsc --noEmit"
   },
   "lint-staged": {
     "*": [

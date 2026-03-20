@@ -15,7 +15,7 @@ const { items } = defineProps<{
   <nav class="flex items-center gap-2 text-sm text-slate-600">
     <template v-for="(item, index) in items" :key="index">
       <div class="flex items-center gap-2">
-        <i v-if="item.icon" :class="item.icon"></i>
+        <i v-if="item.icon" :class="item.icon" />
         <span v-if="item.active || !item.href" class="text-slate-900 font-medium">
           {{ item.label }}
         </span>

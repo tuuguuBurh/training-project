@@ -21,13 +21,13 @@ const handleLogin = async (): Promise<void> => {
     <div class="absolute inset-0 -z-10 overflow-hidden">
       <div
         class="absolute bottom-0 right-0 w-24 h-24 bg-linear-to-br from-blue-500/10 to-purple-500/5 rounded-full blur-xl"
-      ></div>
+      />
     </div>
 
     <div class="relative group">
       <div
         class="absolute -inset-1 bg-linear-to-r from-blue-600/20 via-purple-600/10 to-blue-600/20 rounded-2xl blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-      ></div>
+      />
 
       <div
         class="relative bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-slate-200/50 overflow-hidden"
@@ -54,7 +54,7 @@ const handleLogin = async (): Promise<void> => {
           </div>
         </div>
 
-        <form @submit.prevent="handleLogin" class="px-8 py-8 space-y-7">
+        <form class="px-8 py-8 space-y-7" @submit.prevent="handleLogin">
           <div class="space-y-3">
             <label for="username" class="block text-sm font-medium text-slate-700 tracking-wide">
               <i class="pi pi-user mr-2 text-slate-500" />
@@ -108,7 +108,7 @@ const handleLogin = async (): Promise<void> => {
             >
               <div
                 class="absolute inset-0 bg-linear-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"
-              ></div>
+              />
 
               <div class="relative flex items-center justify-center space-x-3">
                 <i class="pi pi-sign-in" />

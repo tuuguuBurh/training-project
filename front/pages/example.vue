@@ -248,10 +248,10 @@ onMounted(() => {
           <!-- Filters -->
           <div class="bg-slate-50 rounded-lg border border-slate-200">
             <ExampleFilters
-              v-model:searchQuery="searchQuery"
-              v-model:selectedRole="selectedRole"
-              v-model:selectedStatus="selectedStatus"
-              v-model:selectedDepartment="selectedDepartment"
+              v-model:search-query="searchQuery"
+              v-model:selected-role="selectedRole"
+              v-model:selected-status="selectedStatus"
+              v-model:selected-department="selectedDepartment"
               :departments="departments"
             />
           </div>
@@ -266,12 +266,12 @@ onMounted(() => {
         <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
           <div class="flex items-center justify-between">
             <div class="space-y-2">
-              <div class="h-6 w-32 bg-slate-200 rounded animate-pulse"></div>
-              <div class="h-4 w-48 bg-slate-200 rounded animate-pulse"></div>
+              <div class="h-6 w-32 bg-slate-200 rounded animate-pulse" />
+              <div class="h-4 w-48 bg-slate-200 rounded animate-pulse" />
             </div>
             <div class="text-center">
-              <div class="h-8 w-16 bg-slate-200 rounded animate-pulse mb-2"></div>
-              <div class="h-3 w-12 bg-slate-200 rounded animate-pulse"></div>
+              <div class="h-8 w-16 bg-slate-200 rounded animate-pulse mb-2" />
+              <div class="h-3 w-12 bg-slate-200 rounded animate-pulse" />
             </div>
           </div>
         </div>
@@ -285,7 +285,7 @@ onMounted(() => {
           <div class="flex items-center justify-between">
             <div>
               <h2 class="text-lg font-semibold text-slate-900 mb-2 flex items-center gap-2">
-                <i class="pi pi-users text-blue-500"></i>
+                <i class="pi pi-users text-blue-500" />
                 User Management
               </h2>
               <p class="text-sm text-slate-600">Showing {{ filteredUsers.length }} of {{ users.length }} users</p>
@@ -295,7 +295,7 @@ onMounted(() => {
                 <div class="text-2xl font-bold text-blue-600">{{ filteredUsers.length }}</div>
                 <div class="text-xs text-slate-500 uppercase tracking-wide font-medium">Filtered</div>
               </div>
-              <div class="w-px h-12 bg-slate-200"></div>
+              <div class="w-px h-12 bg-slate-200" />
               <div class="text-center">
                 <div class="text-2xl font-bold text-slate-600">{{ users.length }}</div>
                 <div class="text-xs text-slate-500 uppercase tracking-wide font-medium">Total</div>
@@ -326,6 +326,7 @@ onMounted(() => {
     >
       <div v-if="selectedUser" class="space-y-6">
         <!-- Status Banner -->
+        <!-- prettier-ignore -->
         <div
           class="rounded-xl p-4 flex items-center justify-between"
           :class="

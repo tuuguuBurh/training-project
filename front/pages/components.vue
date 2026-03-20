@@ -279,7 +279,7 @@ const handleModalConfirm = () => {
             <p class="text-sm text-slate-600 mt-2">Spinner</p>
           </div>
           <div class="text-center">
-            <i class="pi pi-spin pi-spinner text-3xl text-blue-500"></i>
+            <i class="pi pi-spin pi-spinner text-3xl text-blue-500" />
             <p class="text-sm text-slate-600 mt-2">Icon Spinner</p>
           </div>
         </div>
@@ -341,7 +341,7 @@ const handleModalConfirm = () => {
             :key="icon"
             class="text-center p-3 bg-white rounded-lg border border-slate-200 hover:border-blue-300 transition-colors"
           >
-            <i :class="`pi ${icon}`" class="text-xl text-slate-700"></i>
+            <i :class="`pi ${icon}`" class="text-xl text-slate-700" />
             <p class="text-xs text-slate-500 mt-2 truncate">{{ icon }}</p>
           </div>
         </div>

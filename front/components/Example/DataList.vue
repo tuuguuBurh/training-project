@@ -30,12 +30,12 @@ defineEmits<{
   <CommonBaseDataTable
     :value="users"
     :loading="isLoading"
-    tableStyle="min-width: 60rem"
+    table-style="min-width: 60rem"
     @row-click="(event: any) => $emit('row-click', event.data)"
   >
     <template #empty>
       <div class="text-center py-8">
-        <i class="pi pi-users text-4xl text-slate-300 mb-3"></i>
+        <i class="pi pi-users text-4xl text-slate-300 mb-3" />
         <p class="text-slate-500">No users found matching your criteria</p>
       </div>
     </template>
@@ -102,15 +102,15 @@ defineEmits<{
       <template #body="{ data }">
         <div class="flex gap-1">
           <Button
+            v-tooltip.top="'View Details'"
             icon="pi pi-eye"
             size="small"
             text
             rounded
             severity="secondary"
             @click="$emit('row-click', data)"
-            v-tooltip.top="'View Details'"
           />
-          <Button icon="pi pi-pencil" size="small" text rounded severity="secondary" v-tooltip.top="'Edit'" />
+          <Button v-tooltip.top="'Edit'" icon="pi pi-pencil" size="small" text rounded severity="secondary" />
         </div>
       </template>
     </Column>

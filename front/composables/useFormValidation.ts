@@ -1,4 +1,5 @@
-import type { ZodSchema, ZodError } from 'zod'
+import type { ZodType } from 'zod'
+import { ZodError } from 'zod'
 
 export interface ValidationResult {
   isValid: boolean
@@ -17,7 +18,7 @@ export interface UseFormValidationReturn<T> {
 }
 
 export function useFormValidation<T extends Record<string, any>>(
-  schema: ZodSchema<T>,
+  schema: ZodType<T>,
   formData?: Ref<T>
 ): UseFormValidationReturn<T> {
   const errors = ref<Record<string, string>>({})
@@ -31,11 +32,10 @@ export function useFormValidation<T extends Record<string, any>>(
         errors: {},
       }
     } catch (error) {
-      if (error instanceof Error && 'errors' in error) {
-        const zodError = error as ZodError
+      if (error instanceof ZodError) {
         const fieldErrors: Record<string, string> = {}
 
-        zodError.errors.forEach((err) => {
+        error.issues.forEach((err) => {
           const path = err.path.join('.')
           if (path) {
             fieldErrors[path] = err.message
@@ -67,7 +67,8 @@ export function useFormValidation<T extends Record<string, any>>(
           fieldSchema.parse(value)
 
           if (errors.value[field as string]) {
-            delete errors.value[field as string]
+            const { [field as string]: _, ...rest } = errors.value
+            errors.value = rest
           }
           return undefined
         }
@@ -75,9 +76,8 @@ export function useFormValidation<T extends Record<string, any>>(
 
       return undefined
     } catch (error) {
-      if (error instanceof Error && 'errors' in error) {
-        const zodError = error as ZodError
-        const errorMessage = zodError.errors[0]?.message || 'Invalid value'
+      if (error instanceof ZodError) {
+        const errorMessage = error.issues[0]?.message || 'Invalid value'
         errors.value[field as string] = errorMessage
         return errorMessage
       }
@@ -90,7 +90,8 @@ export function useFormValidation<T extends Record<string, any>>(
 
   const clearError = (field: keyof T): void => {
     if (errors.value[field as string]) {
-      delete errors.value[field as string]
+      const { [field as string]: _, ...rest } = errors.value
+      errors.value = rest
     }
   }
 

@@ -77,7 +77,13 @@ ruff:
 prettier:
 	docker compose -f docker-compose.yml --env-file ./secret/.env run --rm front pnpm format:write
 
-lint: sort-imports ruff prettier ## Run all linting tools
+eslint:
+	docker compose -f docker-compose.yml --env-file ./secret/.env run --rm front pnpm lint
+
+ts-check:
+	docker compose -f docker-compose.yml --env-file ./secret/.env run --rm front pnpm typescript:check
+
+lint: sort-imports ruff prettier eslint ts-check ## Run all linters and formatters
 
 install: down clear build migrate seed down up ## Full clean installation and startup
 

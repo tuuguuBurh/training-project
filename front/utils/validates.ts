@@ -63,30 +63,30 @@ export const required = (v: any) => (v !== undefined && v !== '') || 'This field
 
 export const validateEmailSecure = (email: string): boolean | string => {
   const result = commonValidations.email.safeParse(email)
-  return result.success ? true : result.error.errors[0]?.message || 'Invalid email'
+  return result.success ? true : result.error.issues[0]?.message || 'Invalid email'
 }
 
 export const validatePasswordSecure = (password: string): boolean | string => {
   const result = commonValidations.password.safeParse(password)
-  return result.success ? true : result.error.errors[0]?.message || 'Invalid password'
+  return result.success ? true : result.error.issues[0]?.message || 'Invalid password'
 }
 
 export const validateEmail = (v: any) => {
   const result = commonValidations.emailOptional.safeParse(v)
-  return result.success ? true : result.error.errors[0]?.message || 'Invalid email format'
+  return result.success ? true : result.error.issues[0]?.message || 'Invalid email format'
 }
 
 export const validatePasswordLegacy = (inputString: string) => {
   const result = commonValidations.passwordLegacy.safeParse(inputString)
-  return result.success ? true : result.error.errors[0]?.message || 'Password must be 6-16 characters'
+  return result.success ? true : result.error.issues[0]?.message || 'Password must be 6-16 characters'
 }
 
 export const validatePhoneNumber = (v: any) => {
   const result = commonValidations.phoneNumber.safeParse(v)
-  return result.success ? true : result.error.errors[0]?.message || 'Invalid phone number'
+  return result.success ? true : result.error.issues[0]?.message || 'Invalid phone number'
 }
 
 export const notMinusNumber = (v: any) => {
   const result = commonValidations.positiveNumber.safeParse(v)
-  return result.success ? true : result.error.errors[0]?.message || 'Cannot be negative'
+  return result.success ? true : result.error.issues[0]?.message || 'Cannot be negative'
 }

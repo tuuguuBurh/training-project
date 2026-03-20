@@ -60,8 +60,17 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Prepare Nuxt
+        run: pnpm nuxt prepare
+
       - name: Format Check
         run: pnpm format:check
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: TypeScript Check
+        run: pnpm typescript:check
 
       - name: Build
         run: pnpm run generate

@@ -1,9 +1,8 @@
 import { navigateTo } from 'nuxt/app'
 import type { FetchOptions } from 'ofetch'
 import { getAuthCookie } from '~/utils/cookieConfig'
-import { COOKIE_NAMES } from '~/constants'
+import { COOKIE_NAMES, HTTP_STATUS, ROUTES } from '~/constants'
 import { ApiError, AuthError, NetworkError } from '~/utils/errors'
-import { HTTP_STATUS, ROUTES } from '~/constants'
 
 interface ApiResponse<T> {
   data: T | null
@@ -35,7 +34,7 @@ export const useApi = () => {
         },
       } as any)
 
-      return { data, error: null }
+      return { data: data as T, error: null }
     } catch (error: any) {
       return handleApiError(error)
     }

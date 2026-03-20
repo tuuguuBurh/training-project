@@ -1,5 +1,3 @@
-import type { Destination } from '~/types/destination/destination-types'
-
 export function formatDate(dateString: string | null | undefined, includeTime = false): string {
   if (!dateString) return '-'
   const date = new Date(dateString)
@@ -17,9 +15,4 @@ export function formatDate(dateString: string | null | undefined, includeTime = 
   }
 
   return date.toLocaleDateString('ja-JP', options)
-}
-
-export function getDestinationName(destinationId: string, destinations: Destination[]): string {
-  const destination = destinations.find((d) => d.id === destinationId)
-  return destination?.name || '-'
 }

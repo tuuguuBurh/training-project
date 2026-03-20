@@ -35,9 +35,9 @@ const closeSidebar = () => {
 
 <template>
   <div class="min-h-screen bg-slate-50">
-    <div v-if="sidebarOpen" class="fixed inset-0 z-40 bg-black/50 lg:hidden" @click="closeSidebar"></div>
+    <div v-if="sidebarOpen" class="fixed inset-0 z-40 bg-black/50 lg:hidden" @click="closeSidebar" />
 
-    <TopHeader @toggle-sidebar="toggleSidebar" :sidebar-collapsed="sidebarCollapsed" />
+    <TopHeader :sidebar-collapsed="sidebarCollapsed" @toggle-sidebar="toggleSidebar" />
 
     <Sidebar :open="sidebarOpen" :collapsed="sidebarCollapsed" @close="closeSidebar" />
 

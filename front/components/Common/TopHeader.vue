@@ -21,7 +21,7 @@ const displayEmail = computed(() => userEmail.value || 'user@example.com')
 const userInitials = computed(() => {
   if (userEmail.value) {
     const email = userEmail.value
-    const namePart = email.split('@')[0]
+    const namePart = email.split('@')[0] || 'UN'
     return namePart.substring(0, 2).toUpperCase()
   }
   return 'AT'
@@ -43,8 +43,8 @@ onMounted(() => {
           icon="pi pi-bars"
           severity="secondary"
           text
-          @click="$emit('toggle-sidebar')"
           class="hover:bg-slate-100 transition-colors duration-200"
+          @click="emit('toggle-sidebar')"
         />
       </div>
 

@@ -32,13 +32,13 @@ defineEmits<{
         </div>
       </div>
       <Button
+        v-tooltip="'Copy'"
         icon="pi pi-copy"
         size="small"
         severity="secondary"
         text
-        @click="$emit('copy', value)"
         class="shrink-0 opacity-50 hover:opacity-100 transition-opacity"
-        v-tooltip="'Copy'"
+        @click="$emit('copy', value)"
       />
     </div>
     <div v-else class="text-sm font-mono bg-gray-50 px-3 py-1 rounded-md">-</div>

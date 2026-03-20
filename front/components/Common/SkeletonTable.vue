@@ -15,7 +15,7 @@ withDefaults(defineProps<Props>(), {
     <div>
       <div class="bg-slate-50 p-4 border-b border-slate-200">
         <div class="grid gap-4" :style="`grid-template-columns: repeat(${columns}, 1fr)`">
-          <div v-for="col in columns" :key="col" class="h-4 bg-slate-200 rounded animate-pulse"></div>
+          <div v-for="col in columns" :key="col" class="h-4 bg-slate-200 rounded animate-pulse" />
         </div>
       </div>
 
@@ -27,7 +27,7 @@ withDefaults(defineProps<Props>(), {
               :key="col"
               class="h-4 bg-slate-200 rounded animate-pulse"
               :class="{ 'w-3/4': col === 1, 'w-1/2': col > 3 }"
-            ></div>
+            />
           </div>
         </div>
       </div>

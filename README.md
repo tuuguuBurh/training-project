@@ -48,6 +48,12 @@
 
 5. [Login information and seed data](./back/app/seeds/datas/users.json)
 
+6. Linter and typecheck
+
+    ```sh
+    make lint
+    ```
+
 ## **Install the packages**
 
 1. Python (back)

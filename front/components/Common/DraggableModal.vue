@@ -125,7 +125,7 @@ onUnmounted(() => {
           @mousedown="handleMouseDown"
         >
           <div class="flex items-center gap-2">
-            <i class="pi pi-bars text-slate-400 text-sm"></i>
+            <i class="pi pi-bars text-slate-400 text-sm" />
           </div>
           <Button
             icon="pi pi-times"
@@ -133,8 +133,8 @@ onUnmounted(() => {
             text
             rounded
             size="small"
-            @click="handleClose"
             class="!text-slate-400 hover:!text-slate-600 hover:!bg-slate-100 w-8 h-8 !p-0"
+            @click="handleClose"
           />
         </div>
 
@@ -152,7 +152,7 @@ onUnmounted(() => {
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-2">
                 <div v-if="loading" class="flex items-center gap-2">
-                  <i class="pi pi-spin pi-spinner text-blue-500 text-sm"></i>
+                  <i class="pi pi-spin pi-spinner text-blue-500 text-sm" />
                   <span class="text-sm text-slate-600">Processing...</span>
                 </div>
                 <template v-if="actions">
@@ -175,8 +175,8 @@ onUnmounted(() => {
                   severity="secondary"
                   text
                   size="small"
-                  @click="handleClose"
                   class="!px-4"
+                  @click="handleClose"
                 />
                 <Button
                   v-if="!hideConfirm"
@@ -185,8 +185,8 @@ onUnmounted(() => {
                   size="small"
                   :loading="loading"
                   :disabled="loading"
-                  @click="handleConfirm"
                   class="!px-5 shadow-sm shadow-blue-500/20"
+                  @click="handleConfirm"
                 />
               </div>
             </div>

@@ -47,15 +47,15 @@ const closeSidebar = () => emit('close')
   <aside
     class="fixed left-0 bg-white border-r border-slate-200 transition-all duration-300 ease-out overflow-hidden shadow-sm"
     :class="[
-      open ? 'translate-x-0' : '-translate-x-full lg:translate-x-0',
-      collapsed ? 'lg:w-16' : 'lg:w-64',
+      props.open ? 'translate-x-0' : '-translate-x-full lg:translate-x-0',
+      props.collapsed ? 'lg:w-16' : 'lg:w-64',
       'w-64',
       'top-0 h-full z-50 lg:top-[73px] lg:h-[calc(100vh-73px)] lg:z-40',
     ]"
   >
     <nav
       class="flex-1 py-6 overflow-y-auto transition-all duration-300 ease-out"
-      :class="collapsed ? 'lg:px-2' : 'px-4'"
+      :class="props.collapsed ? 'lg:px-2' : 'px-4'"
     >
       <div class="space-y-2">
         <template v-for="item in navigationItems">
@@ -66,7 +66,7 @@ const closeSidebar = () => emit('close')
               class="flex items-center rounded-xl text-slate-700 hover:bg-slate-50 hover:shadow-sm transition-all duration-200 ease-out group relative overflow-hidden"
               :class="[
                 isItemActive(item) ? 'bg-slate-50 text-blue-700' : '',
-                collapsed ? 'lg:justify-center lg:px-3 lg:py-3' : 'gap-3 px-3 py-3',
+                props.collapsed ? 'lg:justify-center lg:px-3 lg:py-3' : 'gap-3 px-3 py-3',
               ]"
               style="min-height: 44px"
               @click="closeSidebar"
@@ -77,8 +77,8 @@ const closeSidebar = () => emit('close')
                   'text-lg shrink-0 transition-all duration-200',
                   isItemActive(item) ? 'text-blue-500 bg-blue-100 p-2 rounded-lg' : '',
                 ]"
-              ></i>
-              <span v-if="!collapsed" class="font-medium whitespace-nowrap text-sm tracking-wide">
+              />
+              <span v-if="!props.collapsed" class="font-medium whitespace-nowrap text-sm tracking-wide">
                 {{ item.label }}
               </span>
             </NuxtLink>
@@ -86,17 +86,17 @@ const closeSidebar = () => emit('close')
             <div
               v-else
               class="flex items-center rounded-lg text-slate-400 cursor-not-allowed opacity-60"
-              :class="collapsed ? 'lg:justify-center lg:px-3 lg:py-3' : 'gap-3 px-4 py-3'"
+              :class="props.collapsed ? 'lg:justify-center lg:px-3 lg:py-3' : 'gap-3 px-4 py-3'"
             >
-              <i :class="item.icon" class="text-lg shrink-0 w-5 h-5"></i>
-              <span v-if="!collapsed" class="font-medium tracking-wide">
+              <i :class="item.icon" class="text-lg shrink-0 w-5 h-5" />
+              <span v-if="!props.collapsed" class="font-medium tracking-wide">
                 {{ item.label }}
               </span>
             </div>
           </div>
 
           <div v-else :key="`${item.id}-children`">
-            <div v-if="collapsed" class="lg:block hidden">
+            <div v-if="props.collapsed" class="lg:block hidden">
               <NuxtLink
                 v-if="item.available !== false"
                 :to="item.route"
@@ -104,14 +104,14 @@ const closeSidebar = () => emit('close')
                 :class="isItemActive(item) ? 'bg-blue-50 text-blue-700' : ''"
                 @click="closeSidebar"
               >
-                <i :class="item.icon" class="text-lg"></i>
+                <i :class="item.icon" class="text-lg" />
               </NuxtLink>
 
               <div
                 v-else
                 class="flex items-center justify-center px-3 py-3 rounded-lg text-slate-400 cursor-not-allowed opacity-60"
               >
-                <i :class="item.icon" class="text-lg"></i>
+                <i :class="item.icon" class="text-lg" />
               </div>
             </div>
 
@@ -122,11 +122,11 @@ const closeSidebar = () => emit('close')
                     class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors duration-200 ease-out cursor-pointer list-none overflow-hidden"
                     :class="isItemActive(item) ? 'bg-blue-50 text-blue-700 font-semibold' : ''"
                   >
-                    <i :class="item.icon" class="text-lg shrink-0 w-5 h-5"></i>
+                    <i :class="item.icon" class="text-lg shrink-0 w-5 h-5" />
                     <span class="flex-1 font-medium whitespace-nowrap tracking-wide">{{ item.label }}</span>
                     <i
                       class="pi pi-chevron-down text-sm transition-transform duration-300 ease-out group-open:rotate-180 shrink-0"
-                    ></i>
+                    />
                   </summary>
 
                   <div class="mt-1 ml-8 space-y-1 overflow-hidden">
@@ -160,11 +160,11 @@ const closeSidebar = () => emit('close')
                 v-else
                 class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 cursor-not-allowed opacity-60 overflow-hidden"
               >
-                <i :class="item.icon" class="text-lg shrink-0 w-5 h-5"></i>
+                <i :class="item.icon" class="text-lg shrink-0 w-5 h-5" />
                 <span class="flex-1 font-medium whitespace-nowrap tracking-wide flex items-center gap-2">
                   {{ item.label }}
                 </span>
-                <i class="pi pi-lock text-sm shrink-0"></i>
+                <i class="pi pi-lock text-sm shrink-0" />
               </div>
             </div>
           </div>

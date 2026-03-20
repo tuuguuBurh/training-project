@@ -2,7 +2,7 @@
 
 <template>
   <div class="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
-    <DataTable v-bind="$attrs" sortMode="single" paginator :rows="10" stripedRows class="text-sm">
+    <DataTable v-bind="$attrs" sort-mode="single" paginator :rows="10" striped-rows class="text-sm">
       <slot />
       <template #empty>
         <slot name="empty" />

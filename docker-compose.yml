@@ -9,7 +9,6 @@ services:
     volumes:
       - ./back/:/app/
       - uv_cache:/root/.cache/uv
-      - venv:/app/.venv
     env_file:
       - secret/.env
     ports:
@@ -69,7 +68,6 @@ volumes:
   db_data:
   node_modules:
   uv_cache:
-  venv:
 
 networks:
   network_back:

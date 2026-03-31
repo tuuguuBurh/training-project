@@ -68,10 +68,13 @@ migrate: ## Run alembic migrations
 seed: ## Seed the database
 	docker compose -f docker-compose.yml --env-file ./secret/.env run --rm back bash -c "export PYTHONPATH=. && python ./app/seeder.py"
 
-sort-imports:
+ruff-sort:
 	docker compose -f docker-compose.yml --env-file ./secret/.env run --rm back uv run ruff check --select I --fix
 
-ruff:
+ruff-check:
+	docker compose -f docker-compose.yml --env-file ./secret/.env run --rm back uv run ruff check
+
+ruff-format:
 	docker compose -f docker-compose.yml --env-file ./secret/.env run --rm back uv run ruff format
 
 prettier:
@@ -83,7 +86,7 @@ eslint:
 ts-check:
 	docker compose -f docker-compose.yml --env-file ./secret/.env run --rm front pnpm typescript:check
 
-lint: sort-imports ruff prettier eslint ts-check ## Run all linters and formatters
+lint: ruff-sort ruff-check ruff-format prettier eslint ts-check ## Run all linters and formatters
 
 install: down clear build migrate seed down up ## Full clean installation and startup
 

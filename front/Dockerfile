@@ -1,7 +1,7 @@
 FROM node:24-alpine AS base
 
 # Set environment variables
-ENV TZ=Asia/Tokyo
+ENV TZ=${TZ:-Asia/Ulaanbaatar}
 
 # Use the correct timezone
 RUN apk add --no-cache tzdata && \
@@ -15,10 +15,10 @@ COPY ./front/package.json ./
 COPY ./front/pnpm-lock.yaml ./
 RUN pnpm install
 
-EXPOSE 3000
+EXPOSE ${FRONT_PORT:-3000}
 
 ENV NUXT_HOST=0.0.0.0
-ENV NUXT_PORT=3000
+ENV NUXT_PORT=${FRONT_PORT:-3000}
 
 # Development target
 FROM base AS dev

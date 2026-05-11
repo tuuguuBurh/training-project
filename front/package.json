@@ -12,7 +12,7 @@
     "format:check": "prettier --check .",
     "format:write": "prettier --write --list-different .",
     "lint": "eslint . --fix",
-    "typescript:check": "pnpm tsc --noEmit"
+    "typescript:check": "pnpm nuxi typecheck"
   },
   "lint-staged": {
     "*": [
@@ -59,7 +59,7 @@
   },
   "devDependencies": {
     "@primevue/nuxt-module": "^4.5.4",
-    "@tanstack/eslint-plugin-query": "^5.91.4",
+    "@tanstack/eslint-plugin-query": "^5.100.9",
     "@types/node": "^25.5.0",
     "@typescript-eslint/eslint-plugin": "^8.57.1",
     "@typescript-eslint/parser": "^8.57.1",

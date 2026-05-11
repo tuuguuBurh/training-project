@@ -14,7 +14,6 @@ clear-nuxt:
 	rm -rf ./front/.output
 	rm -rf .ruff_cache
 	rm -rf ./back/.ruff_cache
-	rm -rf ./back/.venv
 
 clear-front: clear-nuxt
 	docker volume rm -f ${folder}_node_modules

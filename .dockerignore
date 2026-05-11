@@ -19,7 +19,6 @@ coverage.xml
 .mypy_cache
 .pytest_cache
 .hypothesis
-.env
-.env.example
+.env.*
 .venv
 .ruff_cache

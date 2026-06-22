@@ -25,21 +25,11 @@ const balanceOpen = ref(false)
         <Info class="w-5 h-5 text-slate-400" />
         Чөлөөний үлдэгдэл
       </span>
-      <ChevronDown
-        class="w-5 h-5 text-slate-400 transition-transform"
-        :class="{ 'rotate-180': balanceOpen }"
-      />
+      <ChevronDown class="w-5 h-5 text-slate-400 transition-transform" :class="{ 'rotate-180': balanceOpen }" />
     </button>
 
-    <div
-      v-if="balanceOpen && balances?.length"
-      class="-mt-3 mb-6 grid grid-cols-3 gap-3 text-center"
-    >
-      <div
-        v-for="b in balances"
-        :key="b.label"
-        class="rounded-lg bg-slate-50 border border-slate-200 p-3"
-      >
+    <div v-if="balanceOpen && balances?.length" class="-mt-3 mb-6 grid grid-cols-3 gap-3 text-center">
+      <div v-for="b in balances" :key="b.label" class="rounded-lg bg-slate-50 border border-slate-200 p-3">
         <p class="text-2xl font-bold text-teal-700">{{ b.value }}</p>
         <p class="text-xs text-slate-500 mt-1">{{ b.label }}</p>
       </div>

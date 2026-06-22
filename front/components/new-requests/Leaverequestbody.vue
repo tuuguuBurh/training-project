@@ -53,9 +53,7 @@ function handleClickOutside(e: MouseEvent) {
 <template>
   <div @click="handleClickOutside">
     <div class="mb-5">
-      <label class="block text-sm font-semibold text-slate-700 mb-2">
-        Чөлөөний төрөл
-      </label>
+      <label class="block text-sm font-semibold text-slate-700 mb-2">Чөлөөний төрөл</label>
       <div class="relative">
         <select
           :value="form.leaveTypeId"
@@ -68,19 +66,13 @@ function handleClickOutside(e: MouseEvent) {
             {{ t.name }}
           </option>
         </select>
-        <ChevronDown
-          class="w-4 h-4 text-slate-400 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none"
-        />
+        <ChevronDown class="w-4 h-4 text-slate-400 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none" />
       </div>
-      <p v-if="leaveTypeError" class="text-xs text-red-500 mt-1.5">
-        Чөлөөний төрөл сонгоно уу.
-      </p>
+      <p v-if="leaveTypeError" class="text-xs text-red-500 mt-1.5">Чөлөөний төрөл сонгоно уу.</p>
     </div>
 
     <div class="mb-5">
-      <label class="block text-sm font-semibold text-slate-700 mb-2">
-        Эхлэх өдөр
-      </label>
+      <label class="block text-sm font-semibold text-slate-700 mb-2">Эхлэх өдөр</label>
       <div class="relative max-w-xs">
         <input
           :value="form.startDate"
@@ -88,17 +80,13 @@ function handleClickOutside(e: MouseEvent) {
           class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none focus:ring-2 focus:ring-teal-500/40 focus:border-teal-500"
           @input="updateField('startDate', ($event.target as HTMLInputElement).value)"
         />
-        <Calendar
-          class="w-4 h-4 text-slate-400 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none"
-        />
+        <Calendar class="w-4 h-4 text-slate-400 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none" />
       </div>
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-2">
       <div>
-        <label class="block text-sm font-semibold text-slate-700 mb-2">
-          Эхлэх цаг
-        </label>
+        <label class="block text-sm font-semibold text-slate-700 mb-2">Эхлэх цаг</label>
         <div class="relative">
           <select
             :value="form.startTime"
@@ -107,15 +95,11 @@ function handleClickOutside(e: MouseEvent) {
           >
             <option v-for="t in times" :key="t" :value="t">{{ t }}</option>
           </select>
-          <ChevronDown
-            class="w-4 h-4 text-slate-400 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none"
-          />
+          <ChevronDown class="w-4 h-4 text-slate-400 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none" />
         </div>
       </div>
       <div>
-        <label class="block text-sm font-semibold text-slate-700 mb-2">
-          Дуусах цаг
-        </label>
+        <label class="block text-sm font-semibold text-slate-700 mb-2">Дуусах цаг</label>
         <div class="relative">
           <select
             :value="form.endTime"
@@ -124,29 +108,17 @@ function handleClickOutside(e: MouseEvent) {
           >
             <option v-for="t in times" :key="t" :value="t">{{ t }}</option>
           </select>
-          <ChevronDown
-            class="w-4 h-4 text-slate-400 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none"
-          />
+          <ChevronDown class="w-4 h-4 text-slate-400 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none" />
         </div>
       </div>
     </div>
-    <p
-      class="text-sm font-medium mb-5"
-      :class="timeRangeInvalid ? 'text-red-500' : 'text-teal-700'"
-    >
-      <template v-if="timeRangeInvalid">
-        Дуусах цаг эхлэх цагаас хойш байх ёстой.
-      </template>
-      <template v-else>
-        Та {{ requestedHours }} цагийн хүсэлт илгээх гэж байна.
-      </template>
+    <p class="text-sm font-medium mb-5" :class="timeRangeInvalid ? 'text-red-500' : 'text-teal-700'">
+      <template v-if="timeRangeInvalid">Дуусах цаг эхлэх цагаас хойш байх ёстой.</template>
+      <template v-else>Та {{ requestedHours }} цагийн хүсэлт илгээх гэж байна.</template>
     </p>
 
- 
     <div class="mb-5">
-      <label class="block text-sm font-semibold text-slate-700 mb-2">
-        Тайлбар
-      </label>
+      <label class="block text-sm font-semibold text-slate-700 mb-2">Тайлбар</label>
       <textarea
         :value="form.description"
         rows="4"
@@ -156,11 +128,8 @@ function handleClickOutside(e: MouseEvent) {
       />
     </div>
 
-  
     <div class="mb-6">
-      <label class="block text-sm font-semibold text-slate-700 mb-2">
-        Багийн гишүүд
-      </label>
+      <label class="block text-sm font-semibold text-slate-700 mb-2">Багийн гишүүд</label>
       <div ref="teamWrapperRef" class="relative">
         <button
           type="button"
@@ -196,9 +165,7 @@ function handleClickOutside(e: MouseEvent) {
           </label>
         </div>
       </div>
-      <p v-if="approverError" class="text-xs text-red-500 mt-1.5">
-        Дор хаяж нэг багийн гишүүн сонгоно уу.
-      </p>
+      <p v-if="approverError" class="text-xs text-red-500 mt-1.5">Дор хаяж нэг багийн гишүүн сонгоно уу.</p>
     </div>
   </div>
 </template>

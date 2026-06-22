@@ -1,5 +1,3 @@
-from uuid import UUID
-
 from fastapi import APIRouter, HTTPException, status
 
 from app import crud

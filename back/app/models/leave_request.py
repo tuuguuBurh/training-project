@@ -1,6 +1,7 @@
 import enum
 import uuid
 from datetime import date, datetime, time
+from typing import TYPE_CHECKING
 
 from sqlalchemy import Date, DateTime, Enum, ForeignKey, Text, Time, UniqueConstraint, func
 from sqlalchemy.dialects.postgresql import UUID
@@ -8,6 +9,10 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base_class import Base
 from app.models.default import Default
+
+if TYPE_CHECKING:
+    from app.models.leave_type import LeaveType
+    from app.models.user import User
 
 
 class LeaveRequestStatus(str, enum.Enum):
@@ -58,9 +63,7 @@ class LeaveRequest(Base, Default):
     admin_rejection_reason: Mapped[str | None] = mapped_column(Text, nullable=True)
     admin_decided_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
-    requester: Mapped["User"] = relationship(
-        "User", back_populates="leave_requests", foreign_keys=[user_id]
-    )
+    requester: Mapped["User"] = relationship("User", back_populates="leave_requests", foreign_keys=[user_id])
     admin: Mapped["User | None"] = relationship(
         "User", back_populates="admin_decided_leave_requests", foreign_keys=[admin_id]
     )

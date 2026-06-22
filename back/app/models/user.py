@@ -1,5 +1,6 @@
 import enum
 import uuid
+from typing import TYPE_CHECKING
 
 from sqlalchemy import Boolean, Enum, String, func
 from sqlalchemy.dialects.postgresql import UUID
@@ -8,16 +9,17 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship, validates
 from app.db.base_class import Base
 from app.models.default import Default
 
+if TYPE_CHECKING:
+    from app.models.leave_request import LeaveRequest, LeaveRequestApprover
+
 
 class UserRole(str, enum.Enum):
-
     USER = "USER"
     APPROVER = "APPROVER"
     ADMIN = "ADMIN"
 
 
 class User(Base, Default):
-
     __tablename__ = "users"
 
     id: Mapped[uuid.UUID] = mapped_column(

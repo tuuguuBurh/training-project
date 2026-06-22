@@ -1,4 +1,4 @@
-from app.db.base_class import Base  
-from app.models.leave_request import LeaveRequest, LeaveRequestApprover
-from app.models.leave_type import LeaveType
-from app.models.user import User
+from app.db.base_class import Base  # noqa: F401
+from app.models.leave_request import LeaveRequest, LeaveRequestApprover  # noqa: F401
+from app.models.leave_type import LeaveType  # noqa: F401
+from app.models.user import User  # noqa: F401

@@ -16,11 +16,6 @@ defineProps<{
       {{ loading ? 'Илгээж байна...' : 'Илгээх' }}
     </button>
 
-    <p
-      v-if="submitted"
-      class="mt-4 text-sm font-medium text-teal-700"
-    >
-      Таны хүсэлт амжилттай илгээгдлээ.
-    </p>
+    <p v-if="submitted" class="mt-4 text-sm font-medium text-teal-700">Таны хүсэлт амжилттай илгээгдлээ.</p>
   </div>
 </template>

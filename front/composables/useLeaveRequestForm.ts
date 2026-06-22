@@ -58,7 +58,7 @@ export function useLeaveRequestForm() {
       !submitting.value &&
       !!form.leaveTypeId &&
       form.approverIds.length > 0 &&
-      !timeRangeInvalid.value,
+      !timeRangeInvalid.value
   )
 
   async function loadFormData() {
@@ -111,10 +111,7 @@ export function useLeaveRequestForm() {
       approver_ids: form.approverIds,
     }
 
-    const { data, error } = await api.post<LeaveRequestResponse>(
-      API_ENDPOINTS.LEAVE_REQUESTS.CREATE,
-      payload,
-    )
+    const { data, error } = await api.post<LeaveRequestResponse>(API_ENDPOINTS.LEAVE_REQUESTS.CREATE, payload)
 
     submitting.value = false
 

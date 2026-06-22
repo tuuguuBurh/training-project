@@ -12,11 +12,7 @@ def get_by_email(db: Session, *, email: str) -> User | None:
 
 
 def get_active_team_members(db: Session, *, exclude_user_id: UUID) -> list[User]:
-    stmt = (
-        select(User)
-        .where(User.is_active.is_(True), User.id != exclude_user_id)
-        .order_by(User.name)
-    )
+    stmt = select(User).where(User.is_active.is_(True), User.id != exclude_user_id).order_by(User.name)
     return list(db.scalars(stmt).all())
 
 

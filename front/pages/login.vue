@@ -7,7 +7,6 @@ const auth = useAuth()
 const { form: loginForm, errors, isValid, validateForm } = useLoginForm()
 
 const handleLogin = async (): Promise<void> => {
-
   if (!validateForm()) return
   await auth.login({
     email: loginForm.value.email,

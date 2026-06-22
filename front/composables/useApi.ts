@@ -74,7 +74,10 @@ export const useApi = () => {
       typeof detail === 'string'
         ? detail
         : Array.isArray(detail)
-          ? detail.map((item: { msg?: string }) => item.msg).filter(Boolean).join(', ')
+          ? detail
+              .map((item: { msg?: string }) => item.msg)
+              .filter(Boolean)
+              .join(', ')
           : error?.message || 'An error occurred'
 
     return {

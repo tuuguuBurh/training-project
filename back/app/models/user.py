@@ -3,14 +3,13 @@ import uuid
 
 from sqlalchemy import Boolean, Enum, String, func
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import Mapped, mapped_column, validates
+from sqlalchemy.orm import Mapped, mapped_column, relationship, validates
 
 from app.db.base_class import Base
 from app.models.default import Default
 
 
 class UserRole(str, enum.Enum):
-    """User role enumeration."""
 
     USER = "USER"
     APPROVER = "APPROVER"
@@ -18,7 +17,6 @@ class UserRole(str, enum.Enum):
 
 
 class User(Base, Default):
-    """User model for authentication and user management."""
 
     __tablename__ = "users"
 
@@ -33,7 +31,21 @@ class User(Base, Default):
     )
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default="True")
 
+    leave_requests: Mapped[list["LeaveRequest"]] = relationship(
+        "LeaveRequest",
+        back_populates="requester",
+        foreign_keys="LeaveRequest.user_id",
+    )
+    leave_approvals: Mapped[list["LeaveRequestApprover"]] = relationship(
+        "LeaveRequestApprover",
+        back_populates="approver",
+    )
+    admin_decided_leave_requests: Mapped[list["LeaveRequest"]] = relationship(
+        "LeaveRequest",
+        back_populates="admin",
+        foreign_keys="LeaveRequest.admin_id",
+    )
+
     @validates("email")
     def convert_lower(self, key: str, value: str) -> str:
-        """Normalize email to lowercase and strip whitespace."""
         return value.strip().lower()

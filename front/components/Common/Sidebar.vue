@@ -25,6 +25,8 @@ interface NavigationItem {
 
 const navigationItems: NavigationItem[] = [
   { id: 'dashboard', label: 'Dashboard', icon: 'pi pi-home', route: '/', available: true },
+  { id: 'leave-requests', label: 'Leave Requests', icon: 'pi pi-calendar', route: '/leave-requests', available: true },
+  { id: 'new-request', label: 'New Request', icon: 'pi pi-plus', route: '/new-request', available: true },
   { id: 'example', label: 'Example', icon: 'pi pi-table', route: '/example', available: true },
   { id: 'components', label: 'Components', icon: 'pi pi-palette', route: '/components', available: true },
 ]

@@ -11,6 +11,13 @@ export const API_ENDPOINTS = {
     DELETE: (id: string) => `/users/${id}`,
     GET: (id: string) => `/users/${id}`,
   },
+  LEAVE_TYPES: {
+    LIST: '/leave-types',
+  },
+  LEAVE_REQUESTS: {
+    CREATE: '/leave-requests',
+    TEAM_MEMBERS: '/leave-requests/team-members',
+  },
 } as const
 
 export const COOKIE_NAMES = {

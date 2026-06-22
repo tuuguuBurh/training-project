@@ -21,7 +21,7 @@ export const useAuth = () => {
     try {
       const formData = new URLSearchParams()
       formData.append('grant_type', 'password')
-      formData.append('username', credentials.username)
+      formData.append('username', credentials.email.trim().toLowerCase())
       formData.append('password', credentials.password)
 
       const { data, error: apiError } = await api.post<AuthResponse>(API_ENDPOINTS.AUTH.LOGIN, formData, {
@@ -35,7 +35,7 @@ export const useAuth = () => {
       }
 
       if (data) {
-        cookieAuth.setAuth(data.access_token, credentials.username)
+        cookieAuth.setAuth(data.access_token, credentials.email.trim().toLowerCase())
 
         toast.success('Login successful')
         await router.push('/')
@@ -47,7 +47,7 @@ export const useAuth = () => {
       let errorMessage = 'Login failed'
 
       if (err.status === 401) {
-        errorMessage = 'Invalid username or password'
+        errorMessage = 'Invalid email or password'
       } else if (err.status === 403) {
         errorMessage = 'Account is disabled or suspended'
       } else if (err.status >= 500) {

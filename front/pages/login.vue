@@ -8,9 +8,8 @@ const { form: loginForm, errors, isValid, validateForm } = useLoginForm()
 
 const handleLogin = async (): Promise<void> => {
   if (!validateForm()) return
-
   await auth.login({
-    username: loginForm.value.username,
+    email: loginForm.value.email,
     password: loginForm.value.password,
   })
 }
@@ -56,22 +55,22 @@ const handleLogin = async (): Promise<void> => {
 
         <form class="px-8 py-8 space-y-7" @submit.prevent="handleLogin">
           <div class="space-y-3">
-            <label for="username" class="block text-sm font-medium text-slate-700 tracking-wide">
-              <i class="pi pi-user mr-2 text-slate-500" />
-              Username
+            <label for="email" class="block text-sm font-medium text-slate-700 tracking-wide">
+              <i class="pi pi-envelope mr-2 text-slate-500" />
+              Email
             </label>
             <InputText
-              id="username"
-              v-model="loginForm.username"
-              type="text"
-              placeholder="Enter your username"
+              id="email"
+              v-model="loginForm.email"
+              type="email"
+              placeholder="Enter your email"
               class="w-full h-14 px-5 rounded-xl border-2 border-slate-200 bg-white/90 text-slate-900 focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all duration-300 font-light placeholder:text-slate-400 hover:border-slate-300"
-              :invalid="!!errors.username"
-              autocomplete="username"
+              :invalid="!!errors.email"
+              autocomplete="email"
               required
             />
-            <small v-if="errors.username" class="text-red-500 block text-sm ml-1">
-              {{ errors.username }}
+            <small v-if="errors.email" class="text-red-500 block text-sm ml-1">
+              {{ errors.email }}
             </small>
           </div>
 

@@ -11,11 +11,8 @@ from app.middlewares.input_validation import InputValidationMiddleware
 from app.middlewares.rate_limit import RateLimitMiddleware
 from app.middlewares.request_logging import RequestLoggingMiddleware
 from app.middlewares.security_headers import SecurityHeadersMiddleware
-from app.v1.api_user import user_router
+from app.v1.api import api_router
 
-# ============================================================================
-# Logging Configuration
-# ============================================================================
 logging.basicConfig(
     format="%(levelname)s %(pathname)s:%(funcName)s(%(lineno)d) %(message)s",
     level=logging.DEBUG if settings.ENV.is_development else logging.INFO,
@@ -23,22 +20,14 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-# ============================================================================
-# Application Lifespan
-# ============================================================================
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Application startup and shutdown events."""
     logger.info("Starting %s in %s mode", settings.PROJECT_NAME, settings.ENV.value)
     yield
     logger.info("Shutting down %s", settings.PROJECT_NAME)
 
 
-# ============================================================================
-# Application Factory
-# ============================================================================
 def create_app() -> FastAPI:
-    """Create and configure FastAPI application."""
     app = FastAPI(
         title=settings.PROJECT_NAME,
         openapi_url=settings.OPENAPI_URL,
@@ -46,15 +35,6 @@ def create_app() -> FastAPI:
         lifespan=lifespan,
     )
 
-    _configure_cors(app)
-    _configure_middlewares(app)
-    _configure_routes(app)
-
-    return app
-
-
-def _configure_cors(app: FastAPI) -> None:
-    """Configure CORS middleware."""
     app.add_middleware(
         CORSMiddleware,
         allow_origins=[str(origin).rstrip("/") for origin in settings.BACKEND_CORS_ORIGINS],
@@ -72,69 +52,41 @@ def _configure_cors(app: FastAPI) -> None:
         expose_headers=["X-Request-ID", "X-RateLimit-Remaining", "X-RateLimit-Limit"],
     )
 
-
-def _configure_middlewares(app: FastAPI) -> None:
-    """
-    Configure application middlewares.
-
-    Order matters: last added = first executed.
-    """
-    # Rate limiting (first to execute - reject early)
-    app.add_middleware(RateLimitMiddleware)
-
-    # Input validation
-    app.add_middleware(InputValidationMiddleware)
-
-    # Request logging
-    app.add_middleware(RequestLoggingMiddleware)
-
-    # Database session
-    app.add_middleware(DBSessionMiddleware)
-
-    # Security headers (last to execute - always add headers)
-    app.add_middleware(SecurityHeadersMiddleware)
-
-    # Process time header
-    @app.middleware("http")
-    async def add_process_time_header(request: Request, call_next) -> Response:
-        start_time = time.perf_counter()
-        response = await call_next(request)
-        process_time = time.perf_counter() - start_time
-        response.headers["X-Process-Time"] = f"{process_time:.4f}"
-        return response
-
-
-def _configure_routes(app: FastAPI) -> None:
-    """Configure application routes."""
-    app.include_router(user_router, prefix=settings.API_V1_STR)
-
-    @app.get("/", tags=["Root"])
-    async def root() -> dict:
-        """Root endpoint returning basic API information."""
-        return {
-            "project": settings.PROJECT_NAME,
-            "version": "1.0.0",
-            "environment": settings.ENV.value,
-            "docs_url": f"{settings.API_V1_STR}/docs" if not settings.ENV.is_production else None,
-            "health_url": "/health",
-        }
+    _configure_middlewares(app)
+    app.include_router(api_router, prefix=settings.API_V1_STR)
 
     @app.get("/health", tags=["Health"])
     async def health_check() -> dict:
-        """Health check endpoint for monitoring."""
         return {
             "status": "healthy",
             "timestamp": time.time(),
             "environment": settings.ENV.value,
-            "project": settings.PROJECT_NAME,
         }
 
-    if settings.ENV.is_development:
+    return app
 
-        @app.get("/test-rate-limit", tags=["Debug"])
-        async def test_rate_limit() -> dict:
-            """Test endpoint to verify rate limiting (dev only)."""
-            return {"message": "Rate limiting is working!"}
+
+def _configure_middlewares(app: FastAPI) -> None:
+    # Last added middleware runs first.
+    app.add_middleware(RateLimitMiddleware)
+
+    if settings.ENABLE_INPUT_VALIDATION:
+        app.add_middleware(InputValidationMiddleware)
+
+    if settings.ENABLE_REQUEST_LOGGING:
+        app.add_middleware(RequestLoggingMiddleware)
+
+    app.add_middleware(DBSessionMiddleware)
+
+    if settings.ENABLE_SECURITY_HEADERS:
+        app.add_middleware(SecurityHeadersMiddleware)
+
+    @app.middleware("http")
+    async def add_process_time_header(request: Request, call_next) -> Response:
+        start_time = time.perf_counter()
+        response = await call_next(request)
+        response.headers["X-Process-Time"] = f"{time.perf_counter() - start_time:.4f}"
+        return response
 
 
 app = create_app()

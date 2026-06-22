@@ -1,23 +1,23 @@
 [
   {
-    "email": "shuree@nashatech.com",
-    "first_name": "Shurenchuluun",
-    "last_name": "Erdenebat",
+    "email": "tuuguu@nashatech.com",
+    "name": "Shurenchuluun Erdenebat",
     "password": "u/eq4BiNrB4Z6D7k",
+    "role": "ADMIN",
     "is_active": true
   },
   {
     "email": "tsendee@nashatech.com",
-    "first_name": "Tsendayush",
-    "last_name": "Tserensaikhan",
+    "name": "Tsendayush Tserensaikhan",
     "password": "u/eq4BiNrB4Z6D7k",
+    "role": "APPROVER",
     "is_active": true
   },
   {
     "email": "munkhuush@nashatech.com",
-    "first_name": "Munkhdelger",
-    "last_name": "Gonchigsuren",
+    "name": "Munkhdelger Gonchigsuren",
     "password": "u/eq4BiNrB4Z6D7k",
+    "role": "USER",
     "is_active": true
   }
 ]

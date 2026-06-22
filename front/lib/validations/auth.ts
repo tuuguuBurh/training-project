@@ -2,7 +2,7 @@ import { z } from 'zod'
 import { commonValidations } from '~/utils/validates'
 
 export const loginSchema = z.object({
-  username: z.string().min(1, 'Username is required').max(50, 'Username must be less than 50 characters').trim(),
+  email: commonValidations.email,
   password: commonValidations.password,
 })
 
@@ -13,8 +13,8 @@ export const loginFormSchema = loginSchema.extend({
 export type LoginInput = z.infer<typeof loginSchema>
 export type LoginFormInput = z.infer<typeof loginFormSchema>
 
-export const validateUsername = (username: string): string | undefined => {
-  const result = commonValidations.required.max(50, 'Username must be less than 50 characters').safeParse(username)
+export const validateEmail = (email: string): string | undefined => {
+  const result = commonValidations.email.safeParse(email)
   return result.success ? undefined : result.error.issues[0]?.message
 }
 

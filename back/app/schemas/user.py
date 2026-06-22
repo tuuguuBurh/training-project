@@ -2,6 +2,8 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
+from app.models.user import UserRole
+
 
 class Token(BaseModel):
     """OAuth2 token response."""
@@ -17,30 +19,11 @@ class TokenPayload(BaseModel):
     exp: int | None = None
 
 
-class UserBase(BaseModel):
+class UserResponse(BaseModel):
+    id: UUID
     email: EmailStr
-    first_name: str = Field(..., min_length=1, max_length=100)
-    last_name: str = Field(..., min_length=1, max_length=100)
+    name: str = Field(..., min_length=1, max_length=100)
+    role: UserRole
     is_active: bool = True
 
-
-class UserCreate(UserBase):
-    password: str = Field(..., min_length=8, max_length=128)
-
-
-class UserUpdate(BaseModel):
-    email: EmailStr | None = None
-    first_name: str | None = Field(default=None, min_length=1, max_length=100)
-    last_name: str | None = Field(default=None, min_length=1, max_length=100)
-    password: str | None = Field(default=None, min_length=8, max_length=128)
-    is_active: bool | None = None
-
-
-class UserResponse(UserBase):
-    id: UUID
-
     model_config = ConfigDict(from_attributes=True)
-
-
-class UserInDB(UserResponse):
-    hashed_password: str

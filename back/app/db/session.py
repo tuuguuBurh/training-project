@@ -19,6 +19,7 @@ def _get_db_config() -> dict[str, Any]:
 
 def _create_tcp_url() -> URL:
     """Create TCP connection URL for local/dev environments."""
+    query = {"sslmode": "require"} if "neon.tech" in settings.DB_HOST else None
     return URL.create(
         drivername="postgresql+psycopg2",
         username=settings.DB_USER,
@@ -26,6 +27,7 @@ def _create_tcp_url() -> URL:
         host=settings.DB_HOST,
         port=settings.DB_PORT,
         database=settings.DB_NAME,
+        query=query,
     )
 
 

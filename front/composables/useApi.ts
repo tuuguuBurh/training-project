@@ -21,7 +21,7 @@ export const useApi = () => {
       headers.Authorization = `Bearer ${authCookie.value}`
     }
 
-    if (options.body && !(options.body instanceof FormData)) {
+    if (options.body && !(options.body instanceof FormData) && !(options.body instanceof URLSearchParams)) {
       headers['Content-Type'] = 'application/json'
     }
 
@@ -36,14 +36,15 @@ export const useApi = () => {
 
       return { data: data as T, error: null }
     } catch (error: any) {
-      return handleApiError(error)
+      return handleApiError(error, path)
     }
   }
 
-  const handleApiError = <T>(error: any): ApiResponse<T> => {
+  const handleApiError = <T>(error: any, path: string): ApiResponse<T> => {
     const statusCode = error?.status || error?.statusCode
+    const isLoginRequest = path.includes('/auth/login')
 
-    if (statusCode === HTTP_STATUS.UNAUTHORIZED) {
+    if (statusCode === HTTP_STATUS.UNAUTHORIZED && !isLoginRequest) {
       const auth = getAuthCookie(COOKIE_NAMES.AUTH_TOKEN)
       auth.value = null
       navigateTo(ROUTES.LOGIN)
@@ -68,7 +69,17 @@ export const useApi = () => {
       }
     }
 
-    const message = error?.data?.detail || error?.message || 'An error occurred'
+    const detail = error?.data?.detail
+    const message =
+      typeof detail === 'string'
+        ? detail
+        : Array.isArray(detail)
+          ? detail
+              .map((item: { msg?: string }) => item.msg)
+              .filter(Boolean)
+              .join(', ')
+          : error?.message || 'An error occurred'
+
     return {
       data: null,
       error: new ApiError(message, statusCode, error?.data),

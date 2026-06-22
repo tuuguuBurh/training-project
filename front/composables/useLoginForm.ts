@@ -14,7 +14,7 @@ export interface UseLoginFormReturn {
 
 export function useLoginForm(initialData?: Partial<LoginFormInput>): UseLoginFormReturn {
   const form = ref<LoginFormInput>({
-    username: '',
+    email: '',
     password: '',
     remember: false,
     ...initialData,
@@ -32,7 +32,7 @@ export function useLoginForm(initialData?: Partial<LoginFormInput>): UseLoginFor
 
   const resetForm = (): void => {
     form.value = {
-      username: '',
+      email: '',
       password: '',
       remember: false,
       ...initialData,
@@ -50,7 +50,7 @@ export function useLoginForm(initialData?: Partial<LoginFormInput>): UseLoginFor
   })
 
   watch(
-    () => form.value.username,
+    () => form.value.email,
     (newValue, oldValue) => {
       if (newValue !== oldValue && newValue.length > 0) {
         hasInteracted.value = true
@@ -69,14 +69,14 @@ export function useLoginForm(initialData?: Partial<LoginFormInput>): UseLoginFor
 
   onMounted(() => {
     setTimeout(() => {
-      if (form.value.username.length > 0 || form.value.password.length > 0) {
+      if (form.value.email.length > 0 || form.value.password.length > 0) {
         hasInteracted.value = true
       }
     }, 500)
   })
 
   const isValid = computed(() => {
-    return form.value.username.trim().length > 0 && form.value.password.length >= 6
+    return form.value.email.trim().length > 0 && form.value.password.length >= 6
   })
 
   return {

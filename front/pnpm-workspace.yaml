@@ -1,6 +1,6 @@
 allowBuilds:
-  '@parcel/watcher': false
+  "@parcel/watcher": true
   esbuild: true
-  sharp: false
-  unrs-resolver: false
-  vue-demi: false
+  sharp: true
+  unrs-resolver: true
+  vue-demi: true

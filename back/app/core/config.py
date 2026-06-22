@@ -81,8 +81,10 @@ class Settings(BaseSettings):
     @property
     def DATABASE_URL(self) -> str:
         """Construct database connection URL."""
-        # For local development with socket or host
-        return f"postgresql://{self.DB_USER}:{self.DB_PASS}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
+        base = f"postgresql://{self.DB_USER}:{self.DB_PASS}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
+        if "neon.tech" in self.DB_HOST:
+            return f"{base}?sslmode=require"
+        return base
 
     @field_validator("BACKEND_CORS_ORIGINS", mode="before")
     @classmethod

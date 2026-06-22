@@ -55,31 +55,20 @@ class InputValidationMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
         """Validate and sanitize request input"""
 
-        try:
-            # Skip validation for certain paths
-            if self._should_skip_validation(request.url.path):
-                return await call_next(request)
+        if self._should_skip_validation(request.url.path):
+            return await call_next(request)
 
-            # Validate URL parameters
+        try:
             self._validate_query_params(request)
 
-            # Validate request body for POST/PUT/PATCH requests
             if request.method in ["POST", "PUT", "PATCH"]:
                 await self._validate_request_body(request)
 
-            # Validate headers
             self._validate_headers(request)
-
-            # Continue with request processing
-            response = await call_next(request)
-            return response
-
         except HTTPException:
-            # Re-raise HTTP exceptions (validation failures)
             raise
-        except Exception as e:
-            logger.error(f"Input validation error: {e}")
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid request format")
+
+        return await call_next(request)
 
     def _should_skip_validation(self, path: str) -> bool:
         """Check if validation should be skipped for this path"""

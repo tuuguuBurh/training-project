@@ -6,50 +6,46 @@ from sqlalchemy.orm import Session
 
 from app import crud
 from app.core.config import settings
-from app.core.security import verify_password
 from app.models.user import User
 
 
 def authenticate_user(db: Session, email: str, password: str) -> User | None:
-    """
-    Authenticate a user by email and password.
+    """Authenticate user with plain-text password (NO HASH)."""
 
-    Returns the user if successful, None otherwise.
-    """
-    user = crud.user.get_by_email(db=db, email=email)
+    normalized_email = email.strip().lower()
+    user = crud.user.get_by_email(db=db, email=normalized_email)
+
     if not user:
         return None
-    if not verify_password(password, user.hashed_password):
+
+    # clean compare (avoid hidden spaces)
+    if user.password.strip() != password.strip():
         return None
+
     return user
 
 
 def create_access_token(sub: str, expires_delta: timedelta | None = None) -> str:
-    """
-    Create a JWT access token.
+    """Create JWT token."""
 
-    Args:
-        sub: Subject (typically user email or ID)
-        expires_delta: Optional custom expiration time
-    """
     lifetime = expires_delta or timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
-    return _create_token(token_type="access_token", lifetime=lifetime, sub=sub)
+
+    return _create_token(
+        token_type="access_token",
+        lifetime=lifetime,
+        sub=sub,
+    )
 
 
 def _create_token(*, token_type: str, lifetime: timedelta, sub: str) -> str:
-    """
-    Create a JWT token with the given parameters.
-
-    Uses the configured application timezone.
-    """
     tz = ZoneInfo(settings.TIMEZONE)
     now = datetime.now(tz)
 
     payload = {
         "type": token_type,
-        "exp": now + lifetime,
-        "iat": now,
         "sub": sub,
+        "iat": int(now.timestamp()),
+        "exp": int((now + lifetime).timestamp()),
     }
 
     return jwt.encode(payload, settings.JWT_SECRET, algorithm=settings.ALGORITHM)

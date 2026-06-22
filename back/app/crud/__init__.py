@@ -1,1 +1,3 @@
-from .user import user  # noqa
+from app.crud import user
+
+__all__ = ["user"]

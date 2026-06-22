@@ -1,5 +1,5 @@
 export interface LoginInput {
-  username: string
+  email: string
   password: string
 }
 
@@ -16,7 +16,7 @@ export type PartialLoginInput = Partial<LoginInput>
 
 declare global {
   interface LoginInput {
-    username: string
+    email: string
     password: string
   }
 

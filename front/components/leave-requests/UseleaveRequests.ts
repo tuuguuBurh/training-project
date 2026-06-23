@@ -9,7 +9,7 @@ export interface LeaveListParams {
   month?: number
 }
 
-function mapApiToLeaveRequest(item: LeaveRequestResponse): LeaveRequest {
+export function mapApiToLeaveRequest(item: LeaveRequestResponse): LeaveRequest {
   return {
     id: item.id,
     employee: {
@@ -35,6 +35,14 @@ function mapApiToLeaveRequest(item: LeaveRequestResponse): LeaveRequest {
       rejectionReason: approver.rejection_reason || undefined,
     })),
     description: item.description || undefined,
+    adminDecision: item.admin_decision
+      ? {
+          name: item.admin_name || undefined,
+          status: mapApiStatus(item.admin_decision),
+          rejectionReason: item.admin_rejection_reason || undefined,
+          decidedAt: item.admin_decided_at || undefined,
+        }
+      : undefined,
   }
 }
 

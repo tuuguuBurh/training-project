@@ -3,6 +3,7 @@ import type { FetchOptions } from 'ofetch'
 import { getAuthCookie } from '~/utils/cookieConfig'
 import { COOKIE_NAMES, HTTP_STATUS, ROUTES } from '~/constants'
 import { ApiError, AuthError, NetworkError } from '~/utils/errors'
+import type { User } from '~/types/auth/auth-types'
 
 interface ApiResponse<T> {
   data: T | null
@@ -12,9 +13,9 @@ interface ApiResponse<T> {
 export const useApi = () => {
   const config = useRuntimeConfig()
   const baseURL = config.public.apiBase
+  const authCookie = getAuthCookie(COOKIE_NAMES.AUTH_TOKEN)
 
   const apiFetch = async <T>(path: string, options: FetchOptions<'json'> = {}): Promise<ApiResponse<T>> => {
-    const authCookie = getAuthCookie(COOKIE_NAMES.AUTH_TOKEN)
     const headers: Record<string, string> = {}
 
     if (authCookie.value) {
@@ -45,8 +46,9 @@ export const useApi = () => {
     const isLoginRequest = path.includes('/auth/login')
 
     if (statusCode === HTTP_STATUS.UNAUTHORIZED && !isLoginRequest) {
-      const auth = getAuthCookie(COOKIE_NAMES.AUTH_TOKEN)
-      auth.value = null
+      authCookie.value = null
+      const user = useState<User | null>('auth-user', () => null)
+      user.value = null
       navigateTo(ROUTES.LOGIN)
       return {
         data: null,

@@ -1,6 +1,6 @@
 import { useApi } from './useApi'
 import { API_ENDPOINTS } from '~/constants'
-import type { LoginInput, AuthResponse } from '~/types/auth/auth-types'
+import type { LoginInput, AuthResponse, User } from '~/types/auth/auth-types'
 
 export const useAuth = () => {
   const api = useApi()
@@ -10,9 +10,31 @@ export const useAuth = () => {
 
   const loading = ref(false)
   const error = ref<string[]>([])
+  const user = useState<User | null>('auth-user', () => null)
 
   const isLoggedIn = computed(() => cookieAuth.isAuthenticated.value)
   const access_token = computed(() => cookieAuth.authToken.value || '')
+
+  const fetchMe = async (token?: string): Promise<User | null> => {
+    const authToken = token || cookieAuth.authToken.value
+    if (!authToken) {
+      user.value = null
+      return null
+    }
+
+    const { data, error: apiError } = await api.get<User>(API_ENDPOINTS.AUTH.ME, {
+      headers: { Authorization: `Bearer ${authToken}` },
+    })
+
+    if (apiError || !data) {
+      cookieAuth.clearAuth()
+      user.value = null
+      return null
+    }
+
+    user.value = data
+    return data
+  }
 
   const login = async (credentials: LoginInput): Promise<boolean> => {
     loading.value = true
@@ -35,7 +57,8 @@ export const useAuth = () => {
       }
 
       if (data) {
-        cookieAuth.setAuth(data.access_token, credentials.email.trim().toLowerCase())
+        cookieAuth.setAuth(data.access_token)
+        await fetchMe(data.access_token)
 
         toast.success('Login successful')
         await router.push('/')
@@ -66,6 +89,7 @@ export const useAuth = () => {
 
   const logout = () => {
     cookieAuth.clearAuth()
+    user.value = null
     error.value = []
     toast.success('Successfully logged out')
     router.push('/login')
@@ -78,10 +102,12 @@ export const useAuth = () => {
   return {
     loading: readonly(loading),
     error: readonly(error),
+    user: readonly(user),
     isLoggedIn,
     access_token,
     login,
     logout,
+    fetchMe,
     checkAuthStatus,
   }
 }

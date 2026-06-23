@@ -1,7 +1,8 @@
 from datetime import date, datetime, time
+from typing import Literal
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 
 class LeaveTypeResponse(BaseModel):
@@ -54,6 +55,28 @@ class LeaveRequestApproverResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
+class ApproverDecisionUpdate(BaseModel):
+    decision: Literal["APPROVED", "REJECTED"]
+    rejection_reason: str | None = Field(default=None, max_length=2000)
+
+    @model_validator(mode="after")
+    def reject_requires_reason(self) -> "ApproverDecisionUpdate":
+        if self.decision == "REJECTED" and not (self.rejection_reason and self.rejection_reason.strip()):
+            raise ValueError("Татгалзах үед тайлбар заавал оруулна")
+        return self
+
+
+class AdminStatusUpdate(BaseModel):
+    status: Literal["APPROVED", "REJECTED"]
+    rejection_reason: str | None = Field(default=None, max_length=2000)
+
+    @model_validator(mode="after")
+    def reject_requires_reason(self) -> "AdminStatusUpdate":
+        if self.status == "REJECTED" and not (self.rejection_reason and self.rejection_reason.strip()):
+            raise ValueError("Татгалзах үед тайлбар заавал оруулна")
+        return self
+
+
 class LeaveRequestResponse(BaseModel):
     id: UUID
     requester: RequesterResponse
@@ -65,5 +88,9 @@ class LeaveRequestResponse(BaseModel):
     status: str
     approvers: list[LeaveRequestApproverResponse]
     created_at: datetime | None
+    admin_name: str | None = None
+    admin_decision: str | None = None
+    admin_rejection_reason: str | None = None
+    admin_decided_at: datetime | None = None
 
     model_config = ConfigDict(from_attributes=True)

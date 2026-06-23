@@ -48,4 +48,8 @@ export interface LeaveRequestResponse {
     rejection_reason: string | null
   }>
   created_at: string | null
+  admin_name?: string | null
+  admin_decision?: string | null
+  admin_rejection_reason?: string | null
+  admin_decided_at?: string | null
 }

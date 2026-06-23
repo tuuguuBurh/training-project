@@ -1,16 +1,22 @@
 import calendar
-from datetime import date
+from datetime import date, datetime, timezone
 from uuid import UUID
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
 
-from app.models.leave_request import LeaveRequest, LeaveRequestApprover
+from app.models.leave_request import (
+    ApproverDecisionStatus,
+    LeaveRequest,
+    LeaveRequestApprover,
+    LeaveRequestStatus,
+)
 from app.schemas.leave_request import LeaveRequestCreate
 
 _LIST_OPTIONS = (
     selectinload(LeaveRequest.leave_type),
     selectinload(LeaveRequest.requester),
+    selectinload(LeaveRequest.admin),
     selectinload(LeaveRequest.approvers).selectinload(LeaveRequestApprover.approver),
 )
 
@@ -71,3 +77,66 @@ def list_requests(
         stmt = stmt.where(LeaveRequest.start_date == on_date)
 
     return list(db.scalars(stmt).all())
+
+
+def get_by_id(db: Session, *, leave_request_id: UUID) -> LeaveRequest | None:
+    stmt = select(LeaveRequest).options(*_LIST_OPTIONS).where(LeaveRequest.id == leave_request_id)
+    return db.scalars(stmt).first()
+
+
+def decide_as_approver(
+    db: Session,
+    *,
+    leave_request_id: UUID,
+    approver_user_id: UUID,
+    decision: ApproverDecisionStatus,
+    rejection_reason: str | None = None,
+) -> LeaveRequest | None:
+    leave_request = get_by_id(db=db, leave_request_id=leave_request_id)
+    if not leave_request:
+        return None
+
+    approver_row = next(
+        (row for row in leave_request.approvers if row.approver_id == approver_user_id),
+        None,
+    )
+    if not approver_row:
+        return None
+
+    if decision == ApproverDecisionStatus.REJECTED and not (rejection_reason and rejection_reason.strip()):
+        raise ValueError("Татгалзах үед тайлбар заавал оруулна")
+
+    approver_row.decision = decision
+    approver_row.rejection_reason = rejection_reason.strip() if decision == ApproverDecisionStatus.REJECTED else None
+    approver_row.decided_at = datetime.now(timezone.utc)
+
+    db.commit()
+    return get_by_id(db=db, leave_request_id=leave_request_id)
+
+
+def update_status_as_admin(
+    db: Session,
+    *,
+    leave_request_id: UUID,
+    admin_id: UUID,
+    status: LeaveRequestStatus,
+    rejection_reason: str | None = None,
+) -> LeaveRequest | None:
+    leave_request = get_by_id(db=db, leave_request_id=leave_request_id)
+    if not leave_request:
+        return None
+
+    if status == LeaveRequestStatus.REJECTED and not (rejection_reason and rejection_reason.strip()):
+        raise ValueError("Татгалзах үед тайлбар заавал оруулна")
+
+    admin_decision = ApproverDecisionStatus(status.value)
+    leave_request.status = status
+    leave_request.admin_id = admin_id
+    leave_request.admin_decision = admin_decision
+    leave_request.admin_rejection_reason = (
+        rejection_reason.strip() if status == LeaveRequestStatus.REJECTED else None
+    )
+    leave_request.admin_decided_at = datetime.now(timezone.utc)
+
+    db.commit()
+    return get_by_id(db=db, leave_request_id=leave_request_id)

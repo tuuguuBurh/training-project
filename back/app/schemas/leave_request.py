@@ -35,16 +35,28 @@ class LeaveRequestCreate(BaseModel):
         return end_time
 
 
+class RequesterResponse(BaseModel):
+    id: UUID
+    name: str
+    email: str
+
+    model_config = ConfigDict(from_attributes=True)
+
+
 class LeaveRequestApproverResponse(BaseModel):
     id: UUID
     approver_id: UUID
     approver_name: str
+    decision: str
+    decided_at: datetime | None = None
+    rejection_reason: str | None = None
 
     model_config = ConfigDict(from_attributes=True)
 
 
 class LeaveRequestResponse(BaseModel):
     id: UUID
+    requester: RequesterResponse
     leave_type: LeaveTypeResponse
     start_date: date
     start_time: time

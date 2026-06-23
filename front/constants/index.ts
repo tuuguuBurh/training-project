@@ -15,6 +15,7 @@ export const API_ENDPOINTS = {
     LIST: '/leave-types',
   },
   LEAVE_REQUESTS: {
+    LIST: '/leave-requests',
     CREATE: '/leave-requests',
     TEAM_MEMBERS: '/leave-requests/team-members',
   },

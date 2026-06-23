@@ -1,4 +1,6 @@
-from fastapi import APIRouter, HTTPException, status
+from datetime import date as date_type
+
+from fastapi import APIRouter, HTTPException, Query, status
 
 from app import crud
 from app.models.leave_request import LeaveRequest
@@ -7,6 +9,7 @@ from app.schemas.leave_request import (
     LeaveRequestCreate,
     LeaveRequestResponse,
     LeaveTypeResponse,
+    RequesterResponse,
     TeamMemberResponse,
 )
 from app.v1.deps import ActiveUser, DbSession
@@ -18,6 +21,7 @@ leave_types_router = APIRouter()
 def _to_response(leave_request: LeaveRequest) -> LeaveRequestResponse:
     return LeaveRequestResponse(
         id=leave_request.id,
+        requester=RequesterResponse.model_validate(leave_request.requester),
         leave_type=LeaveTypeResponse.model_validate(leave_request.leave_type),
         start_date=leave_request.start_date,
         start_time=leave_request.start_time,
@@ -29,6 +33,9 @@ def _to_response(leave_request: LeaveRequest) -> LeaveRequestResponse:
                 id=approver.id,
                 approver_id=approver.approver_id,
                 approver_name=approver.approver.name,
+                decision=approver.decision.value,
+                decided_at=approver.decided_at,
+                rejection_reason=approver.rejection_reason,
             )
             for approver in leave_request.approvers
         ],
@@ -39,6 +46,22 @@ def _to_response(leave_request: LeaveRequest) -> LeaveRequestResponse:
 @leave_types_router.get("", response_model=list[LeaveTypeResponse])
 def list_leave_types(db: DbSession, _: ActiveUser) -> list[LeaveTypeResponse]:
     return [LeaveTypeResponse.model_validate(item) for item in crud.leave_type.get_active(db=db)]
+
+
+@router.get("", response_model=list[LeaveRequestResponse])
+def list_leave_requests(
+    db: DbSession,
+    _: ActiveUser,
+    on_date: date_type | None = Query(default=None, alias="date"),
+    year: int | None = Query(default=None, ge=2000, le=2100),
+    month: int | None = Query(default=None, ge=1, le=12),
+) -> list[LeaveRequestResponse]:
+    """Чөлөөний хүсэлтүүдийг өдөр эсвэл сараар шүүж буцаана. Default: өнөөдөр."""
+    if year is not None and month is not None:
+        items = crud.leave_request.list_requests(db=db, year=year, month=month)
+    else:
+        items = crud.leave_request.list_requests(db=db, on_date=on_date or date_type.today())
+    return [_to_response(item) for item in items]
 
 
 @router.get("/team-members", response_model=list[TeamMemberResponse])

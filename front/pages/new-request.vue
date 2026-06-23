@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import LeaveRequestHeader from '~/components/new-requests/Leaverequestheader.vue'
-import LeaveRequestBody from '~/components/new-requests/Leaverequestbody.vue'
-import LeaveRequestFooter from '~/components/new-requests/Leaverequestfooter.vue'
+import LeaveRequestHeader from '~/components/new-requests/Newrequestheader.vue'
+import LeaveRequestBody from '~/components/new-requests/Newrequestbody.vue'
+import LeaveRequestFooter from '~/components/new-requests/Newrequestfooter.vue'
 import type { LeaveRequestFormState } from '~/types/leave-request/leave-request-types'
 
 const {
@@ -49,7 +49,7 @@ function updateForm(next: LeaveRequestFormState) {
         <p class="text-red-600 mb-4">{{ loadError }}</p>
         <button
           type="button"
-          class="rounded-lg bg-teal-700 px-4 py-2 text-sm font-semibold text-white hover:bg-teal-800"
+          class="rounded-lg bg-[#1877F2] px-4 py-2 text-sm font-semibold text-white hover:bg-blue-800"
           @click="loadFormData"
         >
           Дахин оролдох

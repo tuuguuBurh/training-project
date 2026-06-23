@@ -27,8 +27,9 @@ const navigationItems: NavigationItem[] = [
   { id: 'dashboard', label: 'Dashboard', icon: 'pi pi-home', route: '/', available: true },
   { id: 'leave-requests', label: 'Leave Requests', icon: 'pi pi-calendar', route: '/leave-requests', available: true },
   { id: 'new-request', label: 'New Request', icon: 'pi pi-plus', route: '/new-request', available: true },
-  { id: 'example', label: 'Example', icon: 'pi pi-table', route: '/example', available: true },
-  { id: 'components', label: 'Components', icon: 'pi pi-palette', route: '/components', available: true },
+  { id: 'my-requests', label: 'My Requests', icon: 'pi pi-user', route: '/my-requests', available: true },
+  { id: 'example', label: 'Example', icon: 'pi pi-table', route: '/example', available: false },
+  { id: 'components', label: 'Components', icon: 'pi pi-palette', route: '/components', available: false },
 ]
 
 const isItemActive = (item: NavigationItem): boolean => {

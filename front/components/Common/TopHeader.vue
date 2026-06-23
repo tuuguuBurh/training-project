@@ -6,8 +6,7 @@ defineProps({
 const emit = defineEmits(['toggle-sidebar'])
 
 const profileMenuOpen = ref(false)
-const { userEmail } = useCookieAuth()
-const { logout: authLogout } = useAuth()
+const { user, logout: authLogout } = useAuth()
 
 const toggleProfileMenu = () => {
   profileMenuOpen.value = !profileMenuOpen.value
@@ -17,11 +16,14 @@ const logout = async () => {
   authLogout()
 }
 
-const displayEmail = computed(() => userEmail.value || 'user@example.com')
+const displayName = computed(() => user.value?.name || '')
+const displayEmail = computed(() => user.value?.email || '')
 const userInitials = computed(() => {
-  if (userEmail.value) {
-    const email = userEmail.value
-    const namePart = email.split('@')[0] || 'UN'
+  if (user.value?.name) {
+    return user.value.name.substring(0, 2).toUpperCase()
+  }
+  if (user.value?.email) {
+    const namePart = user.value.email.split('@')[0] || 'UN'
     return namePart.substring(0, 2).toUpperCase()
   }
   return 'AT'
@@ -60,7 +62,7 @@ onMounted(() => {
               {{ userInitials }}
             </div>
             <div class="hidden lg:block text-left">
-              <p class="text-sm font-medium text-slate-900">{{ displayEmail.split('@')[0] }}</p>
+              <p class="text-sm font-medium text-slate-900">{{ displayName || displayEmail.split('@')[0] }}</p>
             </div>
             <i class="pi pi-chevron-down text-xs text-slate-400" />
           </button>
@@ -70,7 +72,7 @@ onMounted(() => {
             class="profile-dropdown absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-slate-200 z-50"
           >
             <div class="px-4 py-3 border-b border-slate-200">
-              <p class="font-medium text-slate-900">{{ displayEmail.split('@')[0] }}</p>
+              <p class="font-medium text-slate-900">{{ displayName || displayEmail.split('@')[0] }}</p>
               <p class="text-sm text-slate-600">{{ displayEmail }}</p>
             </div>
             <div class="py-2">

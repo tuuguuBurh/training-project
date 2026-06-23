@@ -70,6 +70,14 @@ function handleRowClick(request: LeaveRequest) {
   detailModalVisible.value = true
 }
 
+function handleRequestUpdated(updated: LeaveRequest) {
+  selectedRequest.value = updated
+  const index = leaveRequests.value.findIndex((item) => item.id === updated.id)
+  if (index !== -1) {
+    leaveRequests.value[index] = updated
+  }
+}
+
 watch(
   () => [filters.value.filterMode, filters.value.date, filters.value.month],
   () => {
@@ -101,6 +109,10 @@ onMounted(async () => {
       </div>
     </div>
 
-    <LeaveRequestDetailModal v-model:visible="detailModalVisible" :request="selectedRequest" />
+    <LeaveRequestDetailModal
+      v-model:visible="detailModalVisible"
+      :request="selectedRequest"
+      @updated="handleRequestUpdated"
+    />
   </div>
 </template>

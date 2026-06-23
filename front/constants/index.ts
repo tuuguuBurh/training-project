@@ -18,12 +18,13 @@ export const API_ENDPOINTS = {
     LIST: '/leave-requests',
     CREATE: '/leave-requests',
     TEAM_MEMBERS: '/leave-requests/team-members',
+    MY_DECISION: (id: string) => `/leave-requests/${id}/my-decision`,
+    STATUS: (id: string) => `/leave-requests/${id}/status`,
   },
 } as const
 
 export const COOKIE_NAMES = {
   AUTH_TOKEN: 'user-auth',
-  USER_EMAIL: 'user-email',
 } as const
 
 export const HTTP_STATUS = {
@@ -38,3 +39,9 @@ export const ROUTES = {
   LOGIN: '/login',
   FORBIDDEN: '/403',
 } as const
+
+export const balances = [
+  { label: 'Ээлжийн амралт', value: 12 },
+  { label: 'Өвчтэй', value: 5 },
+  { label: 'Чөлөө', value: 3 },
+]

@@ -20,6 +20,13 @@ export interface LeaveTypeInfo {
   name: string
 }
 
+export interface AdminDecision {
+  name?: string
+  status: LeaveStatus
+  rejectionReason?: string
+  decidedAt?: string
+}
+
 export interface LeaveRequest {
   id: string
   employee: Employee
@@ -31,6 +38,7 @@ export interface LeaveRequest {
   submittedAt: string
   approvers: Approver[]
   description?: string
+  adminDecision?: AdminDecision
 }
 
 export const LEAVE_STATUS_LABELS: Record<LeaveStatus, string> = {

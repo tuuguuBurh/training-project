@@ -3,7 +3,7 @@ import LeaveRequestHeader from '~/components/new-requests/Newrequestheader.vue'
 import LeaveRequestBody from '~/components/new-requests/Newrequestbody.vue'
 import LeaveRequestFooter from '~/components/new-requests/Newrequestfooter.vue'
 import type { LeaveRequestFormState } from '~/types/leave-request/leave-request-types'
-
+import { balances } from '~/constants'
 const {
   leaveTypes,
   teamMembers,
@@ -20,12 +20,6 @@ const {
   loadFormData,
   submit,
 } = useLeaveRequestForm()
-
-const balances = [
-  { label: 'Ээлжийн амралт', value: 12 },
-  { label: 'Өвчтэй', value: 5 },
-  { label: 'Чөлөө', value: 3 },
-]
 
 function updateForm(next: LeaveRequestFormState) {
   Object.assign(form, next)

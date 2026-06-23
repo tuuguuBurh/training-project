@@ -17,7 +17,3 @@ export const SECURE_COOKIE_CONFIG: CookieConfig = {
 export const getAuthCookie = (name: string = 'user-auth') => {
   return useCookie(name, SECURE_COOKIE_CONFIG)
 }
-
-export const getEmailCookie = (name: string = 'user-email') => {
-  return useCookie(name, SECURE_COOKIE_CONFIG)
-}

@@ -1,3 +1,13 @@
+export type UserRole = 'USER' | 'APPROVER' | 'ADMIN'
+
+export interface User {
+  id: string
+  email: string
+  name: string
+  role: UserRole
+  is_active: boolean
+}
+
 export interface LoginInput {
   email: string
   password: string
@@ -15,6 +25,16 @@ export interface AuthResponse {
 export type PartialLoginInput = Partial<LoginInput>
 
 declare global {
+  type UserRole = 'USER' | 'APPROVER' | 'ADMIN'
+
+  interface User {
+    id: string
+    email: string
+    name: string
+    role: UserRole
+    is_active: boolean
+  }
+
   interface LoginInput {
     email: string
     password: string

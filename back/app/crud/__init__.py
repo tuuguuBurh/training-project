@@ -1,3 +1,3 @@
-from app.crud import leave_request, leave_type, user
+from app.crud import admin, leave_request, leave_type, user
 
-__all__ = ["leave_request", "leave_type", "user"]
+__all__ = ["admin", "leave_request", "leave_type", "user"]

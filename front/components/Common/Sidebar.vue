@@ -6,7 +6,7 @@ const props = defineProps({
 const emit = defineEmits(['close'])
 
 const route = useRoute()
-
+const { user } = useAuth()
 interface NavigationChild {
   id: string
   label: string
@@ -23,14 +23,56 @@ interface NavigationItem {
   available?: boolean
 }
 
-const navigationItems: NavigationItem[] = [
-  { id: 'dashboard', label: 'Dashboard', icon: 'pi pi-home', route: '/', available: true },
-  { id: 'leave-requests', label: 'Leave Requests', icon: 'pi pi-calendar', route: '/leave-requests', available: true },
-  { id: 'new-request', label: 'New Request', icon: 'pi pi-plus', route: '/new-request', available: true },
-  { id: 'my-requests', label: 'My Requests', icon: 'pi pi-user', route: '/my-requests', available: true },
-  { id: 'example', label: 'Example', icon: 'pi pi-table', route: '/example', available: false },
-  { id: 'components', label: 'Components', icon: 'pi pi-palette', route: '/components', available: false },
-]
+const navigationItems = computed<NavigationItem[]>(() => [
+  {
+    id: 'dashboard',
+    label: 'Dashboard',
+    icon: 'pi pi-home',
+    route: '/',
+    available: true,
+  },
+  {
+    id: 'leave-requests',
+    label: 'Leave Requests',
+    icon: 'pi pi-calendar',
+    route: '/leave-requests',
+    available: true,
+  },
+  {
+    id: 'new-request',
+    label: 'New Request',
+    icon: 'pi pi-plus',
+    route: '/new-request',
+    available: true,
+  },
+  {
+    id: 'my-requests',
+    label: 'My Requests',
+    icon: 'pi pi-user',
+    route: '/my-requests',
+    available: true,
+  },
+
+  ...(user.value?.role === 'ADMIN'
+    ? [
+        {
+          id: 'admin',
+          label: 'Admin',
+          icon: 'pi pi-shield',
+          route: '/admin/dashboard',
+          available: true,
+          children: [
+            {
+              id: 'admin-dashboard',
+              label: 'Dashboard',
+              route: '/admin/dashboard',
+              available: true,
+            },
+          ],
+        },
+      ]
+    : []),
+])
 
 const isItemActive = (item: NavigationItem): boolean => {
   if (item.children) {

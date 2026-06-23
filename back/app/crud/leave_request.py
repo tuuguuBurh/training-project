@@ -58,6 +58,9 @@ def list_requests(
     on_date: date | None = None,
     year: int | None = None,
     month: int | None = None,
+    from_date: date | None = None,
+    to_date: date | None = None,
+    status: LeaveRequestStatus | None = None,
 ) -> list[LeaveRequest]:
     stmt = (
         select(LeaveRequest)
@@ -73,8 +76,13 @@ def list_requests(
         last_day = calendar.monthrange(year, month)[1]
         end = date(year, month, last_day)
         stmt = stmt.where(LeaveRequest.start_date >= start, LeaveRequest.start_date <= end)
+    elif from_date is not None and to_date is not None:
+        stmt = stmt.where(LeaveRequest.start_date >= from_date, LeaveRequest.start_date <= to_date)
     elif on_date is not None:
         stmt = stmt.where(LeaveRequest.start_date == on_date)
+
+    if status is not None:
+        stmt = stmt.where(LeaveRequest.status == status)
 
     return list(db.scalars(stmt).all())
 

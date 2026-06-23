@@ -1,4 +1,5 @@
 from datetime import date as date_type
+from datetime import timedelta
 from uuid import UUID
 
 from fastapi import APIRouter, HTTPException, Query, status
@@ -66,6 +67,23 @@ def _to_response(leave_request: LeaveRequest, current_user: User | None = None) 
 @leave_types_router.get("", response_model=list[LeaveTypeResponse])
 def list_leave_types(db: DbSession, _: ActiveUser) -> list[LeaveTypeResponse]:
     return [LeaveTypeResponse.model_validate(item) for item in crud.leave_type.get_active(db=db)]
+
+
+@router.get("/recent-approved", response_model=list[LeaveRequestResponse])
+def list_recent_approved_leave_requests(
+    db: DbSession,
+    user: ActiveUser,
+    days: int = Query(default=7, ge=1, le=30),
+) -> list[LeaveRequestResponse]:
+    today = date_type.today()
+    from_date = today - timedelta(days=days - 1)
+    items = crud.leave_request.list_requests(
+        db=db,
+        from_date=from_date,
+        to_date=today,
+        status=LeaveRequestStatus.APPROVED,
+    )
+    return [_to_response(item, user) for item in items]
 
 
 @router.get("", response_model=list[LeaveRequestResponse])

@@ -138,3 +138,32 @@ def update_status_as_admin(
 
     db.commit()
     return get_by_id(db=db, leave_request_id=leave_request_id)
+
+
+def list_requests_by_user(
+    db: Session,
+    *,
+    user_id: UUID,
+    on_date: date | None = None,
+    year: int | None = None,
+    month: int | None = None,
+) -> list[LeaveRequest]:
+    stmt = (
+        select(LeaveRequest)
+        .options(*_LIST_OPTIONS)
+        .where(LeaveRequest.user_id == user_id)
+        .order_by(
+            LeaveRequest.start_date.desc(),
+            LeaveRequest.created_at.desc(),
+        )
+    )
+
+    if year is not None and month is not None:
+        start = date(year, month, 1)
+        last_day = calendar.monthrange(year, month)[1]
+        end = date(year, month, last_day)
+        stmt = stmt.where(LeaveRequest.start_date >= start, LeaveRequest.start_date <= end)
+    elif on_date is not None:
+        stmt = stmt.where(LeaveRequest.start_date == on_date)
+
+    return list(db.scalars(stmt).all())

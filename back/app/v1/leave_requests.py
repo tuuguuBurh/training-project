@@ -76,7 +76,6 @@ def list_leave_requests(
     year: int | None = Query(default=None, ge=2000, le=2100),
     month: int | None = Query(default=None, ge=1, le=12),
 ) -> list[LeaveRequestResponse]:
-    """Чөлөөний хүсэлтүүдийг өдөр эсвэл сараар шүүж буцаана. Default: өнөөдөр."""
     if year is not None and month is not None:
         items = crud.leave_request.list_requests(db=db, year=year, month=month)
     else:
@@ -84,9 +83,25 @@ def list_leave_requests(
     return [_to_response(item, user) for item in items]
 
 
+@router.get("/mine", response_model=list[LeaveRequestResponse])
+def list_my_leave_requests(
+    db: DbSession,
+    user: ActiveUser,
+    on_date: date_type | None = Query(default=None, alias="date"),
+    year: int | None = Query(default=None, ge=2000, le=2100),
+    month: int | None = Query(default=None, ge=1, le=12),
+) -> list[LeaveRequestResponse]:
+    if year is not None and month is not None:
+        items = crud.leave_request.list_requests_by_user(db=db, user_id=user.id, year=year, month=month)
+    elif on_date is not None:
+        items = crud.leave_request.list_requests_by_user(db=db, user_id=user.id, on_date=on_date)
+    else:
+        items = crud.leave_request.list_requests_by_user(db=db, user_id=user.id)
+    return [_to_response(item, user) for item in items]
+
+
 @router.get("/team-members", response_model=list[TeamMemberResponse])
 def list_team_members(db: DbSession, user: ActiveUser) -> list[TeamMemberResponse]:
-    """Багийн гишүүд сонгоход ашиглах идэвхтэй хэрэглэгчид."""
     members = crud.user.get_active_team_members(db=db, exclude_user_id=user.id)
     return [TeamMemberResponse.model_validate(item) for item in members]
 

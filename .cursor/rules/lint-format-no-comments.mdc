@@ -1,0 +1,40 @@
+---
+description: Lint/format CI-г давах, comment үлдээхгүй код бичих стандарт
+alwaysApply: true
+---
+
+# Lint, Format, Comment-гүй код
+
+Код бичих, засах бүрт дараах дүрмийг мөрдөнө.
+
+## Comment хориглох
+
+- `//`, `#`, `/* */`, `<!-- -->` comment бүү үлдээ.
+- Код өөрөө ойлгомжтой байх ёстой — нэршил, функц, төрөл ашиглана.
+- Docstring зөвхөн FastAPI endpoint-ийн `"""..."""` (одоогийн backend хэв маяг) хэрэгтэй үед л.
+
+## Backend (`back/`)
+
+- Formatter: `uv run ruff format --check .`
+- Lint: `uv run ruff check .`
+- Засах: `uv run ruff format .`
+- `line-length = 120` (`pyproject.toml`)
+
+## Frontend (`front/`)
+
+- Format: `pnpm format:check` (Prettier)
+- Lint: `pnpm lint` (ESLint + Nuxt)
+- Types: `pnpm typescript:check`
+- Засах: `pnpm format:write`, дараа нь `pnpm lint`
+- CI-ийн өмнө: `pnpm nuxi prepare`
+
+## ESLint / Prettier гол дүрмүүд
+
+- `no-console` — зөвхөн `console.warn`, `console.error`
+- `@typescript-eslint/no-unused-vars` — ашиглаагүй хувьсагч `_`-ээр эхлүүлнэ
+- `vue/html-self-closing` — `<div />`, `<textarea />` гэх мэт self-closing
+- `@typescript-eslint/consistent-type-definitions` — `interface` ашиглана (одоогийн төсөл)
+
+## Дуусгахын өмнө
+
+Өөрчлөлт commit/PR-ийн өмнө backend болон frontend дээрх шалгалтуудыг ажиллуулж, бүгд амжилттай дууссан эсэхийг баталгаажуулна.

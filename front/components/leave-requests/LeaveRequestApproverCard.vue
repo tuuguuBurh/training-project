@@ -59,7 +59,8 @@ watch(
     </div>
 
     <div v-if="approver.rejectionReason" class="mt-2 rounded-md bg-rose-50 px-2.5 py-2 text-xs text-rose-700">
-      <span class="font-medium">Тайлбар:</span> {{ approver.rejectionReason }}
+      <span class="font-medium">Тайлбар:</span>
+      {{ approver.rejectionReason }}
     </div>
 
     <div v-if="canAct && approver.status === 'pending'" class="mt-3 space-y-2 border-t border-slate-100 pt-3">

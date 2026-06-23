@@ -49,7 +49,8 @@ watch(
     </div>
 
     <div v-if="request.adminDecision?.rejectionReason" class="rounded-md bg-white px-3 py-2 text-xs text-rose-700">
-      <span class="font-medium">Админы тайлбар:</span> {{ request.adminDecision.rejectionReason }}
+      <span class="font-medium">Админы тайлбар:</span>
+      {{ request.adminDecision.rejectionReason }}
       <p v-if="request.adminDecision.decidedAt" class="mt-1 text-[11px] text-slate-400">
         {{ request.adminDecision.name }} ·
         {{ dateTimeFormatter.format(new Date(request.adminDecision.decidedAt)) }}

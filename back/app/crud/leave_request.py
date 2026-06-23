@@ -133,9 +133,7 @@ def update_status_as_admin(
     leave_request.status = status
     leave_request.admin_id = admin_id
     leave_request.admin_decision = admin_decision
-    leave_request.admin_rejection_reason = (
-        rejection_reason.strip() if status == LeaveRequestStatus.REJECTED else None
-    )
+    leave_request.admin_rejection_reason = rejection_reason.strip() if status == LeaveRequestStatus.REJECTED else None
     leave_request.admin_decided_at = datetime.now(timezone.utc)
 
     db.commit()

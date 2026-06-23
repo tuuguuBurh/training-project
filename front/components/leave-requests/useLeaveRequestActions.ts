@@ -15,13 +15,10 @@ export function useLeaveRequestActions() {
     rejectionReason?: string
   ): Promise<LeaveRequest | null> {
     submitting.value = true
-    const { data, error } = await api.patch<LeaveRequestResponse>(
-      API_ENDPOINTS.LEAVE_REQUESTS.MY_DECISION(requestId),
-      {
-        decision,
-        rejection_reason: rejectionReason?.trim() || null,
-      }
-    )
+    const { data, error } = await api.patch<LeaveRequestResponse>(API_ENDPOINTS.LEAVE_REQUESTS.MY_DECISION(requestId), {
+      decision,
+      rejection_reason: rejectionReason?.trim() || null,
+    })
     submitting.value = false
 
     if (error || !data) {

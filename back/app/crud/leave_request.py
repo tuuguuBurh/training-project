@@ -1,3 +1,5 @@
+import calendar
+from datetime import date
 from uuid import UUID
 
 from sqlalchemy import select
@@ -5,6 +7,12 @@ from sqlalchemy.orm import Session, selectinload
 
 from app.models.leave_request import LeaveRequest, LeaveRequestApprover
 from app.schemas.leave_request import LeaveRequestCreate
+
+_LIST_OPTIONS = (
+    selectinload(LeaveRequest.leave_type),
+    selectinload(LeaveRequest.requester),
+    selectinload(LeaveRequest.approvers).selectinload(LeaveRequestApprover.approver),
+)
 
 
 def create(
@@ -34,12 +42,32 @@ def create(
 
     db.commit()
 
+    stmt = select(LeaveRequest).options(*_LIST_OPTIONS).where(LeaveRequest.id == leave_request.id)
+    return db.scalars(stmt).one()
+
+
+def list_requests(
+    db: Session,
+    *,
+    on_date: date | None = None,
+    year: int | None = None,
+    month: int | None = None,
+) -> list[LeaveRequest]:
     stmt = (
         select(LeaveRequest)
-        .options(
-            selectinload(LeaveRequest.leave_type),
-            selectinload(LeaveRequest.approvers).selectinload(LeaveRequestApprover.approver),
+        .options(*_LIST_OPTIONS)
+        .order_by(
+            LeaveRequest.start_date.desc(),
+            LeaveRequest.created_at.desc(),
         )
-        .where(LeaveRequest.id == leave_request.id)
     )
-    return db.scalars(stmt).one()
+
+    if year is not None and month is not None:
+        start = date(year, month, 1)
+        last_day = calendar.monthrange(year, month)[1]
+        end = date(year, month, last_day)
+        stmt = stmt.where(LeaveRequest.start_date >= start, LeaveRequest.start_date <= end)
+    elif on_date is not None:
+        stmt = stmt.where(LeaveRequest.start_date == on_date)
+
+    return list(db.scalars(stmt).all())

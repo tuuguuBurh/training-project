@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { ChevronDown, Calendar } from 'lucide-vue-next'
+import { ChevronDown } from 'lucide-vue-next'
 import type { LeaveRequestFormState, LeaveType, TeamMember } from '~/types/leave-request/leave-request-types'
 
 const props = defineProps<{
@@ -57,7 +57,7 @@ function handleClickOutside(e: MouseEvent) {
       <div class="relative">
         <select
           :value="form.leaveTypeId"
-          class="w-full appearance-none rounded-xl border bg-white px-4 py-3 text-sm text-slate-700 outline-none focus:ring-2 focus:ring-teal-500/40 focus:border-teal-500"
+          class="w-full appearance-none rounded-xl border bg-white px-4 py-3 text-sm text-slate-700 outline-none focus:ring-2 focus:ring-[#1877F2] focus:border-[#1877F2]"
           :class="leaveTypeError ? 'border-red-400' : 'border-slate-200'"
           @change="updateField('leaveTypeId', ($event.target as HTMLSelectElement).value)"
         >
@@ -77,10 +77,9 @@ function handleClickOutside(e: MouseEvent) {
         <input
           :value="form.startDate"
           type="date"
-          class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none focus:ring-2 focus:ring-teal-500/40 focus:border-teal-500"
+          class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none focus:ring-2 focus:ring-[#1877F2] focus:border-[#1877F2]"
           @input="updateField('startDate', ($event.target as HTMLInputElement).value)"
         />
-        <Calendar class="w-4 h-4 text-slate-400 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none" />
       </div>
     </div>
 
@@ -90,7 +89,7 @@ function handleClickOutside(e: MouseEvent) {
         <div class="relative">
           <select
             :value="form.startTime"
-            class="w-full appearance-none rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none focus:ring-2 focus:ring-teal-500/40 focus:border-teal-500"
+            class="w-full appearance-none rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none focus:ring-2 focus:ring-[#1877F2] focus:border-[#1877F2]"
             @change="updateField('startTime', ($event.target as HTMLSelectElement).value)"
           >
             <option v-for="t in times" :key="t" :value="t">{{ t }}</option>
@@ -103,7 +102,7 @@ function handleClickOutside(e: MouseEvent) {
         <div class="relative">
           <select
             :value="form.endTime"
-            class="w-full appearance-none rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none focus:ring-2 focus:ring-teal-500/40 focus:border-teal-500"
+            class="w-full appearance-none rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-[#1877F2] outline-none focus:ring-2 focus:ring-[#1877F2] focus:border-[#1877F2]"
             @change="updateField('endTime', ($event.target as HTMLSelectElement).value)"
           >
             <option v-for="t in times" :key="t" :value="t">{{ t }}</option>
@@ -112,7 +111,7 @@ function handleClickOutside(e: MouseEvent) {
         </div>
       </div>
     </div>
-    <p class="text-sm font-medium mb-5" :class="timeRangeInvalid ? 'text-red-500' : 'text-teal-700'">
+    <p class="text-sm font-medium mb-5" :class="timeRangeInvalid ? 'text-red-500' : 'text-[#1877F2]'">
       <template v-if="timeRangeInvalid">Дуусах цаг эхлэх цагаас хойш байх ёстой.</template>
       <template v-else>Та {{ requestedHours }} цагийн хүсэлт илгээх гэж байна.</template>
     </p>
@@ -123,7 +122,7 @@ function handleClickOutside(e: MouseEvent) {
         :value="form.description"
         rows="4"
         placeholder="Тайлбар оруулах"
-        class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none resize-y focus:ring-2 focus:ring-teal-500/40 focus:border-teal-500"
+        class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none resize-y focus:ring-2 focus:ring-[#1877F2] focus:border-[#1877F2]"
         @input="updateField('description', ($event.target as HTMLTextAreaElement).value)"
       />
     </div>
@@ -133,7 +132,7 @@ function handleClickOutside(e: MouseEvent) {
       <div ref="teamWrapperRef" class="relative">
         <button
           type="button"
-          class="w-full flex items-center justify-between rounded-xl border bg-white px-4 py-3 text-sm text-left outline-none focus:ring-2 focus:ring-teal-500/40 focus:border-teal-500"
+          class="w-full flex items-center justify-between rounded-xl border bg-white px-4 py-3 text-sm text-left outline-none focus:ring-2 focus:ring-[#1877F2] focus:border-[#1877F2]"
           :class="[
             form.approverIds.length ? 'text-slate-700' : 'text-slate-400',
             approverError ? 'border-red-400' : 'border-slate-200',
@@ -157,7 +156,7 @@ function handleClickOutside(e: MouseEvent) {
           >
             <input
               type="checkbox"
-              class="rounded border-slate-300 text-teal-600 focus:ring-teal-500"
+              class="rounded border-slate-300 text-[#1877F2] focus:ring-[#1877F2]"
               :checked="form.approverIds.includes(member.id)"
               @change="toggleMember(member.id)"
             />

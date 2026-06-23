@@ -28,6 +28,11 @@ export interface LeaveRequestCreatePayload {
 
 export interface LeaveRequestResponse {
   id: string
+  requester: {
+    id: string
+    name: string
+    email: string
+  }
   leave_type: LeaveType
   start_date: string
   start_time: string
@@ -38,6 +43,9 @@ export interface LeaveRequestResponse {
     id: string
     approver_id: string
     approver_name: string
+    decision: string
+    decided_at: string | null
+    rejection_reason: string | null
   }>
   created_at: string | null
 }

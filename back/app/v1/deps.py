@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 
 from app import crud
 from app.core.config import settings
-from app.models.user import User
+from app.models.user import User, UserRole
 from app.schemas.user import TokenPayload
 
 oauth2_scheme = OAuth2PasswordBearer(
@@ -76,7 +76,18 @@ def get_current_active_user(
     return current_user
 
 
-# Type aliases for cleaner dependency injection
+def get_current_admin(
+    current_user: Annotated[User, Depends(get_current_active_user)],
+) -> User:
+    if current_user.role != UserRole.ADMIN:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Зөвхөн админ энэ үйлдлийг хийх боломжтой",
+        )
+    return current_user
+
+
 DbSession = Annotated[Session, Depends(get_db)]
 CurrentUser = Annotated[User, Depends(get_current_user)]
 ActiveUser = Annotated[User, Depends(get_current_active_user)]
+AdminUser = Annotated[User, Depends(get_current_admin)]

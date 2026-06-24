@@ -237,3 +237,7 @@ cred.*.json
 cred
 
 .pnpm-store
+
+**/package-lock.json
+**/bun.lock
+**/yarn.lock

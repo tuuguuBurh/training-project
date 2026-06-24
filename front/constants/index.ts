@@ -22,6 +22,13 @@ export const API_ENDPOINTS = {
     MY_DECISION: (id: string) => `/leave-requests/${id}/my-decision`,
     STATUS: (id: string) => `/leave-requests/${id}/status`,
   },
+  ADMIN: {
+    DASHBOARD_STATS: '/admin/dashboard/stats',
+    LEAVE_TYPES: '/admin/dashboard/leave-types',
+    MONTHLY_TREND: '/admin/dashboard/monthly-trend',
+    EMPLOYEES: '/admin/employees',
+    LEAVE_REPORT: '/admin/reports/leaves',
+  },
 } as const
 
 export const COOKIE_NAMES = {

@@ -21,8 +21,8 @@ const draftEnd = ref(props.endDate)
 const label = computed(() => formatDateRangeLabel(props.startDate, props.endDate))
 
 watch(
-  () => [props.startDate, props.endDate],
-  ([start, end]) => {
+  () => ({ start: props.startDate, end: props.endDate }),
+  ({ start, end }) => {
     draftStart.value = start
     draftEnd.value = end
   }

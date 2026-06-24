@@ -1,4 +1,11 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import RecentApprovedLeaves from '~/components/home/RecentApprovedLeaves.vue'
+
+definePageMeta({
+  title: 'Нүүр',
+})
+</script>
+
 <template>
-  <div class="p-5">home</div>
+  <RecentApprovedLeaves />
 </template>

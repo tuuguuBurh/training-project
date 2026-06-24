@@ -25,7 +25,7 @@ watch(
   ([start, end]) => {
     draftStart.value = start
     draftEnd.value = end
-  },
+  }
 )
 
 onClickOutside(rootRef, () => {
@@ -78,10 +78,7 @@ function onEndChange(value: string) {
       <ChevronDown class="size-4 text-slate-500 transition-transform" :class="open ? 'rotate-180' : ''" />
     </button>
 
-    <div
-      v-if="open"
-      class="absolute right-0 z-20 mt-2 w-72 rounded-xl border border-slate-200 bg-white p-4 shadow-lg"
-    >
+    <div v-if="open" class="absolute right-0 z-20 mt-2 w-72 rounded-xl border border-slate-200 bg-white p-4 shadow-lg">
       <p class="mb-3 text-sm font-medium text-slate-900">Хугацаа сонгох</p>
 
       <div class="space-y-3">

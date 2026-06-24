@@ -62,11 +62,7 @@ function sortRequests(requests: LeaveRequest[], sort: RecentApprovedLeaveFilterS
   return sorted.sort((a, b) => b.submittedAt.localeCompare(a.submittedAt))
 }
 
-export function groupLeaveRequestsByDay(
-  requests: LeaveRequest[],
-  startDate: string,
-  endDate: string,
-): LeaveDayGroup[] {
+export function groupLeaveRequestsByDay(requests: LeaveRequest[], startDate: string, endDate: string): LeaveDayGroup[] {
   const todayKey = toDateKey(new Date())
   const grouped = new Map<string, LeaveRequest[]>()
 
@@ -153,7 +149,7 @@ export function useRecentApprovedLeaves() {
     () => [filters.value.startDate, filters.value.endDate],
     () => {
       fetchRecentApprovedLeaves()
-    },
+    }
   )
 
   return {

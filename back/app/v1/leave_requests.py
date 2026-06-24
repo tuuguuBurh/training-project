@@ -73,14 +73,39 @@ def list_leave_types(db: DbSession, _: ActiveUser) -> list[LeaveTypeResponse]:
 def list_recent_approved_leave_requests(
     db: DbSession,
     user: ActiveUser,
-    days: int = Query(default=7, ge=1, le=30),
+    days: int | None = Query(default=None, ge=1, le=90),
+    from_date: date_type | None = Query(default=None),
+    to_date: date_type | None = Query(default=None),
 ) -> list[LeaveRequestResponse]:
     today = date_type.today()
-    from_date = today - timedelta(days=days - 1)
+
+    if from_date is not None and to_date is not None:
+        if from_date > to_date:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="from_date must be before or equal to to_date",
+            )
+        if (to_date - from_date).days > 89:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Date range cannot exceed 90 days",
+            )
+    elif from_date is not None or to_date is not None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Both from_date and to_date are required",
+        )
+    elif days is not None:
+        from_date = today - timedelta(days=days - 1)
+        to_date = today
+    else:
+        from_date = today - timedelta(days=6)
+        to_date = today
+
     items = crud.leave_request.list_requests(
         db=db,
         from_date=from_date,
-        to_date=today,
+        to_date=to_date,
         status=LeaveRequestStatus.APPROVED,
     )
     return [_to_response(item, user) for item in items]

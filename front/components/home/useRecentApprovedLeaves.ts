@@ -1,8 +1,10 @@
 import { useApi } from '~/composables/useApi'
 import { API_ENDPOINTS } from '~/constants'
-import type { LeaveRequestResponse } from '~/types/leave-request/leave-request-types'
+import type { LeaveRequestResponse, LeaveType } from '~/types/leave-request/leave-request-types'
 import { mapApiToLeaveRequest } from '~/components/leave-requests/UseleaveRequests'
 import type { LeaveRequest } from '~/components/leave-requests/LeaveRequest'
+import { buildDatesBetween, dateRangeForPeriod, toDateKey } from './recent-approved-leaves-dates'
+import type { RecentApprovedLeaveFilterState } from './recent-approved-leaves-types'
 
 export const RECENT_APPROVED_DAYS = 7
 
@@ -11,24 +13,6 @@ export interface LeaveDayGroup {
   label: string
   subtitle: string
   requests: LeaveRequest[]
-}
-
-function toDateKey(value: Date) {
-  const year = value.getFullYear()
-  const month = String(value.getMonth() + 1).padStart(2, '0')
-  const day = String(value.getDate()).padStart(2, '0')
-  return `${year}-${month}-${day}`
-}
-
-function buildRecentDates(days: number) {
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
-
-  return Array.from({ length: days }, (_, index) => {
-    const date = new Date(today)
-    date.setDate(today.getDate() - index)
-    return toDateKey(date)
-  })
 }
 
 function formatDayLabel(dateKey: string, todayKey: string) {
@@ -59,7 +43,30 @@ function formatDaySubtitle(dateKey: string) {
   }).format(new Date(`${dateKey}T00:00:00`))
 }
 
-export function groupLeaveRequestsByDay(requests: LeaveRequest[], days = RECENT_APPROVED_DAYS): LeaveDayGroup[] {
+function matchesSearch(request: LeaveRequest, search: string) {
+  const query = search.trim().toLowerCase()
+  if (!query) {
+    return true
+  }
+  return request.employee.name.toLowerCase().includes(query) || request.employee.email.toLowerCase().includes(query)
+}
+
+function sortRequests(requests: LeaveRequest[], sort: RecentApprovedLeaveFilterState['sort']) {
+  const sorted = [...requests]
+  if (sort === 'name') {
+    return sorted.sort((a, b) => a.employee.name.localeCompare(b.employee.name, 'mn'))
+  }
+  if (sort === 'oldest') {
+    return sorted.sort((a, b) => a.submittedAt.localeCompare(b.submittedAt))
+  }
+  return sorted.sort((a, b) => b.submittedAt.localeCompare(a.submittedAt))
+}
+
+export function groupLeaveRequestsByDay(
+  requests: LeaveRequest[],
+  startDate: string,
+  endDate: string,
+): LeaveDayGroup[] {
   const todayKey = toDateKey(new Date())
   const grouped = new Map<string, LeaveRequest[]>()
 
@@ -72,7 +79,7 @@ export function groupLeaveRequestsByDay(requests: LeaveRequest[], days = RECENT_
     grouped.set(request.startDate, [request])
   }
 
-  return buildRecentDates(days).map((date) => ({
+  return buildDatesBetween(startDate, endDate).map((date) => ({
     date,
     label: formatDayLabel(date, todayKey),
     subtitle: formatDaySubtitle(date),
@@ -80,17 +87,55 @@ export function groupLeaveRequestsByDay(requests: LeaveRequest[], days = RECENT_
   }))
 }
 
+const defaultRange = dateRangeForPeriod('week')
+
 export function useRecentApprovedLeaves() {
   const api = useApi()
   const leaveRequests = ref<LeaveRequest[]>([])
+  const leaveTypes = ref<LeaveType[]>([])
   const loading = ref(false)
   const error = ref<string | null>(null)
+  const filters = ref<RecentApprovedLeaveFilterState>({
+    period: 'week',
+    startDate: defaultRange.startDate,
+    endDate: defaultRange.endDate,
+    search: '',
+    leaveTypeId: 'all',
+    sort: 'newest',
+  })
 
-  async function fetchRecentApprovedLeaves(days = RECENT_APPROVED_DAYS) {
+  const dayGroups = computed(() => {
+    const grouped = groupLeaveRequestsByDay(leaveRequests.value, filters.value.startDate, filters.value.endDate)
+    return grouped
+      .map((group) => {
+        const filtered = group.requests.filter((request) => {
+          if (filters.value.leaveTypeId !== 'all' && request.leaveType.id !== filters.value.leaveTypeId) {
+            return false
+          }
+          return matchesSearch(request, filters.value.search)
+        })
+        return {
+          ...group,
+          requests: sortRequests(filtered, filters.value.sort),
+        }
+      })
+      .filter((group) => group.requests.length > 0)
+  })
+
+  async function fetchLeaveTypes() {
+    const { data } = await api.get<LeaveType[]>(API_ENDPOINTS.LEAVE_TYPES.LIST)
+    leaveTypes.value = data || []
+  }
+
+  async function fetchRecentApprovedLeaves() {
     loading.value = true
     error.value = null
 
-    const path = `${API_ENDPOINTS.LEAVE_REQUESTS.RECENT_APPROVED}?days=${days}`
+    const query = new URLSearchParams({
+      from_date: filters.value.startDate,
+      to_date: filters.value.endDate,
+    })
+    const path = `${API_ENDPOINTS.LEAVE_REQUESTS.RECENT_APPROVED}?${query.toString()}`
     const { data, error: apiError } = await api.get<LeaveRequestResponse[]>(path)
 
     loading.value = false
@@ -104,13 +149,21 @@ export function useRecentApprovedLeaves() {
     leaveRequests.value = (data || []).map(mapApiToLeaveRequest)
   }
 
-  const dayGroups = computed(() => groupLeaveRequestsByDay(leaveRequests.value))
+  watch(
+    () => [filters.value.startDate, filters.value.endDate],
+    () => {
+      fetchRecentApprovedLeaves()
+    },
+  )
 
   return {
     leaveRequests,
+    leaveTypes,
     dayGroups,
+    filters,
     loading,
     error,
     fetchRecentApprovedLeaves,
+    fetchLeaveTypes,
   }
 }

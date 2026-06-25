@@ -21,6 +21,7 @@ from app.v1.deps import ActiveUser, DbSession
 
 router = APIRouter()
 leave_types_router = APIRouter()
+MAX_DATE_RANGE = 90
 
 
 def _can_view_description(leave_request: LeaveRequest, user: User) -> bool:
@@ -73,7 +74,7 @@ def list_leave_types(db: DbSession, _: ActiveUser) -> list[LeaveTypeResponse]:
 def list_recent_approved_leave_requests(
     db: DbSession,
     user: ActiveUser,
-    days: int | None = Query(default=None, ge=1, le=90),
+    days: int | None = Query(default=None, ge=1, le=MAX_DATE_RANGE),
     from_date: date_type | None = Query(default=None),
     to_date: date_type | None = Query(default=None),
 ) -> list[LeaveRequestResponse]:
@@ -85,10 +86,10 @@ def list_recent_approved_leave_requests(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="from_date must be before or equal to to_date",
             )
-        if (to_date - from_date).days > 89:
+        if (to_date - from_date).days > MAX_DATE_RANGE - 1:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Date range cannot exceed 90 days",
+                detail=f"Date range cannot exceed {MAX_DATE_RANGE} days",
             )
     elif from_date is not None or to_date is not None:
         raise HTTPException(
